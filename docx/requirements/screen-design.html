@@ -71,6 +71,9 @@
     flex-direction: column;
     gap: 20px;
     position: relative;
+    width: 320px; /* 固定幅 */
+    height: auto;
+    min-height: 360px; /* 固定最小高さ */
   }
 
   .frame.alarm {
@@ -117,6 +120,7 @@
     display: flex;
     gap: 2px;
     flex: 1;
+    flex-direction: row-reverse; /* 右から左へ並べる */
   }
 
   .seg {
@@ -124,6 +128,7 @@
     height: 10px;
     border-radius: 2px;
     background: #2a2a2a;
+    transition: background 0.3s ease;
   }
 
   .seg.empty {
@@ -193,6 +198,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
   .btn.primary {
@@ -209,6 +216,25 @@
 
   .btn.disabled {
     opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Alarm Stop Button Special UX */
+  .btn.alarm-stop {
+    height: 64px;
+    font-size: 18px;
+    font-weight: 800;
+    background: #e07060;
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 12px rgba(224, 112, 96, 0.4);
+    animation: pulse-active 1.2s infinite;
+  }
+
+  @keyframes pulse-active {
+    0% { transform: scale(1); box-shadow: 0 4px 12px rgba(224, 112, 96, 0.4); }
+    50% { transform: scale(1.08); box-shadow: 0 8px 24px rgba(224, 112, 96, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 4px 12px rgba(224, 112, 96, 0.4); }
   }
 
   /* Alarm banner */
@@ -221,6 +247,12 @@
     font-weight: 600;
     text-align: center;
     letter-spacing: 0.04em;
+    animation: slide-down 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  }
+
+  @keyframes slide-down {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 
   /* Annotation */
@@ -364,14 +396,15 @@
       <div class="timer-area">
         <div class="bar-row">
           <div class="segments">
+            <!-- 経過時間分が点灯（右から左へ） -->
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
             <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
             <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
           </div>
@@ -385,7 +418,7 @@
       </div>
     </div>
     <div class="annotations">
-      <div class="ann">バーは左から右へ順にセグメントが消灯</div>
+      <div class="ann">バーは右から左へ順にセグメントが点灯（経過時間を表現）</div>
       <div class="ann">残り時間は秒単位でリアルタイム更新</div>
       <div class="ann">開始ボタンは非活性。停止・リセットが活性</div>
     </div>
@@ -407,10 +440,10 @@
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
             <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
-            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
             <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
             <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
           </div>
@@ -443,28 +476,29 @@
       <div class="timer-area">
         <div class="bar-row">
           <div class="segments">
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
-            <div class="seg empty"></div><div class="seg empty"></div><div class="seg empty"></div>
+            <!-- 全点灯 -->
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
           </div>
           <div class="time-display">00分00秒</div>
         </div>
         <div class="btn-row">
-          <div class="btn danger">アラーム停止</div>
+          <div class="btn alarm-stop">ここを押して止める！</div>
         </div>
       </div>
     </div>
     <div class="annotations">
       <div class="ann">アラームバナーを最上部に表示</div>
-      <div class="ann">アラーム音はユーザーが停止するまで継続</div>
-      <div class="ann">停止ボタンで未開始状態へ戻る</div>
+      <div class="ann">バーは全セグメントが点灯した状態</div>
+      <div class="ann">停止ボタンを巨大化・アニメーションさせて強調（UX向上）</div>
     </div>
   </div>
 
@@ -497,7 +531,7 @@
       <tr>
         <td>ビジュアルバー</td>
         <td>30セグメント固定、横方向</td>
-        <td>1セグメント = 設定時間 ÷ 30。左から消灯</td>
+        <td>1セグメント = 設定時間 ÷ 30。右から点灯（経過時間を表現）</td>
       </tr>
       <tr>
         <td>残り時間表示</td>
@@ -506,8 +540,8 @@
       </tr>
       <tr>
         <td>操作ボタン</td>
-        <td>開始 / 停止・再開 / リセット</td>
-        <td>状態に応じてラベルと活性状態が切り替わる</td>
+        <td>開始 / 停止・再開 / リセット / アラーム停止</td>
+        <td>状態に応じてラベル・活性状態・スタイルが切り替わる</td>
       </tr>
       <tr>
         <td>アラームバナー</td>
