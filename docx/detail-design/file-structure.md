@@ -102,7 +102,7 @@ visual-bar-timer/
 | `useAlarm.ts` | タイマー終了イベントを受け取り、Rustのアラームコマンドを呼び出す |
 | `timerReducer.ts` | `useReducer` で状態遷移を一元管理。副作用なし |
 | `formatTime.ts` | 残り秒数を `MM分SS秒` 形式の文字列に変換 |
-| `calcSegments.ts` | 残り時間から点灯すべきセグメント数（0〜30）を計算 |
+| `calcSegments.ts` | 経過時間から点灯すべきセグメント数（0〜30）を計算 |
 
 ### バックエンド（Rust）
 
