@@ -1,175 +1,66 @@
-# 環境構築
+# 環境構築（Docker/Dev Container）
 
 ## 1. 前提条件
 
-以下がインストール済みであること。
+ローカル環境には以下のツールのみが必要です。
 
-| ツール | 最低バージョン | 確認コマンド |
+| ツール | 確認コマンド | 役割 |
 |---|---|---|
-| Node.js | 20.x LTS | `node -v` |
-| pnpm | 9.x | `pnpm -v` |
-| Rust (rustup) | stable | `rustc --version` |
-| Git | 2.x | `git --version` |
+| Docker Desktop | `docker --version` | 開発環境のコンテナ化 |
+| VS Code | `code --version` | 推奨エディタ |
+| Dev Containers (拡張機能) | - | VS Code 内でコンテナを開くため |
+
+**※ ローカルに Node.js, pnpm, Rust, Cargo をインストールする必要はありません。**
 
 ---
 
-## 2. OS別の追加要件
+## 2. 開発環境の起動方法
 
-### Windows
-
-```powershell
-# Microsoft C++ Build Tools が必要
-# Visual Studio Installer から "C++ によるデスクトップ開発" をインストールする
-# WebView2 は Windows 11 に標準搭載。Windows 10 は自動インストールされる
-```
-
-### macOS
+### 手順 1: プロジェクトを VS Code で開く
 
 ```bash
-# Xcode Command Line Tools
-xcode-select --install
+code zestark-visual-timer
 ```
 
-### Linux（Ubuntu / Debian 系）
+### 手順 2: コンテナをビルド・起動する
 
-```bash
-sudo apt update
-sudo apt install -y \
-  libwebkit2gtk-4.1-dev \
-  libssl-dev \
-  libgtk-3-dev \
-  libayatana-appindicator3-dev \
-  librsvg2-dev \
-  libasound2-dev
-```
+1. VS Code 右下に表示される **「Reopen in Container」** ポップアップをクリック。
+2. または、コマンドパレット（`Ctrl+Shift+P`）から **`Dev Containers: Reopen in Container`** を選択。
+
+### 手順 3: 依存関係のインストール（自動）
+
+コンテナ起動時に `pnpm install` が自動的に実行されます。
 
 ---
 
-## 3. Rust のセットアップ
+## 3. 開発コマンド（コンテナ内）
+
+VS Code の内蔵ターミナル（コンテナ内）で実行します。
 
 ```bash
-# rustup のインストール（未インストールの場合）
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# フロントエンドの開発サーバー起動
+pnpm dev
 
-# stable ツールチェーンの確認
-rustup default stable
-rustup update
-
-# バージョン確認
-rustc --version
-cargo --version
-```
-
----
-
-## 4. プロジェクトの作成
-
-```bash
-# pnpm のインストール（未インストールの場合）
-npm install -g pnpm
-
-# Tauri CLI のインストール
-pnpm add -g @tauri-apps/cli
-
-# Tauri + React + TypeScript プロジェクトの作成
-pnpm create tauri-app@latest visual-bar-timer \
-  --template react-ts \
-  --manager pnpm
-
-cd visual-bar-timer
-
-# 依存パッケージのインストール
-pnpm install
-```
-
----
-
-## 5. Tauri プラグインの追加
-
-```bash
-# デスクトップ通知プラグイン
-pnpm tauri add notification
-
-# 音声再生クレートの追加（Cargo.toml に追記）
-cd src-tauri
-cargo add rodio
-cargo add tokio --features full
-```
-
----
-
-## 6. 開発サーバーの起動
-
-```bash
-# プロジェクトルートで実行
+# Tauri アプリのビルド・実行（Linux/WSL2環境でGUI表示が必要）
 pnpm tauri dev
 ```
 
-フロントエンド（Vite）とTauriウィンドウが同時に起動する。  
-ホットリロードにより、フロントエンドの変更はウィンドウに即時反映される。
-
 ---
 
-## 7. ビルド（本番）
+## 4. GitHub Actions でのビルド
+
+ローカルでのビルドが困難な場合、GitHub にプッシュするだけで Actions が自動的に実行バイナリを生成します。
 
 ```bash
-# 各OSのネイティブインストーラーを生成
-pnpm tauri build
-```
-
-出力先：`src-tauri/target/release/bundle/`
-
-| OS | 生成物 |
-|---|---|
-| Windows | `.msi` / `.exe` |
-| macOS | `.dmg` / `.app` |
-| Linux | `.deb` / `.AppImage` |
-
----
-
-## 8. 推奨エディタ設定（VS Code）
-
-```bash
-# 推奨拡張機能
-code --install-extension rust-lang.rust-analyzer
-code --install-extension tauri-apps.tauri-vscode
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension esbenp.prettier-vscode
-```
-
-`.vscode/settings.json`
-
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[rust]": {
-    "editor.defaultFormatter": "rust-lang.rust-analyzer"
-  },
-  "rust-analyzer.checkOnSave.command": "clippy"
-}
+git push origin main
 ```
 
 ---
 
-## 9. 環境変数
+## 5. Docker 構成の仕組み
 
-本アプリはオフライン動作を前提とするため、環境変数は不要。  
-開発時のみ以下を `.env.local` に設定できる。
-
-```env
-# Vite 開発サーバーポート（任意）
-VITE_PORT=1420
-```
-
----
-
-## 10. トラブルシューティング
-
-| 症状 | 対処 |
-|---|---|
-| `cargo build` が失敗する | `rustup update` でツールチェーンを更新する |
-| Linux で WebView が表示されない | `libwebkit2gtk-4.1-dev` がインストールされているか確認する |
-| Windows で MSVC エラーが出る | C++ Build Tools が正しくインストールされているか確認する |
-| 音声が再生されない | Linux は `libasound2-dev` が必要。macOS / Windows は標準で動作する |
-| `pnpm tauri dev` が遅い | Rust の初回ビルドは数分かかる。2回目以降はキャッシュにより高速化される |
+- **[Dockerfile.dev](Dockerfile.dev)**: `rust:1.77` をベースに Node.js, pnpm, Tauri 依存パッケージをプリインストールした開発用イメージ。
+- **[docker-compose.yml](docker-compose.yml)**: 
+  - ホストのソースコードを `/app` にマウント。
+  - `pnpm-cache`, `cargo-cache` などのボリュームを使用して、再起動時のビルド速度を高速化。
+- **[.devcontainer/devcontainer.json](.devcontainer/devcontainer.json)**: VS Code の開発環境をコンテナと連携させる設定。
