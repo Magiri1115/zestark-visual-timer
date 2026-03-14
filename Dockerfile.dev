@@ -23,9 +23,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # 開発環境の設定
 WORKDIR /app
 
-# 依存関係のキャッシュ用（オプション）
-# COPY package.json pnpm-lock.yaml ./
-# RUN pnpm install
+# pnpm のグローバルパスエラーを修正するための設定
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+# setup の代わりにディレクトリ作成と設定を行う
+RUN mkdir -p $PNPM_HOME && pnpm config set global-bin-dir $PNPM_HOME
 
 # Tauri CLI のインストール
 RUN pnpm add -g @tauri-apps/cli
