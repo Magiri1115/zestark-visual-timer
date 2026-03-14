@@ -86,6 +86,15 @@
     text-align: center;
     padding-bottom: 16px;
     border-bottom: 1px solid #eee;
+    height: 72px; /* レイアウト崩れ防止のための固定高さ */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .clock-area.hidden {
+    visibility: hidden; /* S2, S3, S4で使用 */
   }
 
   .clock-time {
@@ -389,7 +398,7 @@
     <div class="screen-title">S2 &nbsp;実行中</div>
     <div class="screen-state">カウントダウン動作中</div>
     <div class="frame">
-      <div class="clock-area">
+      <div class="clock-area hidden">
         <div class="clock-time">14:32:10</div>
         <div class="clock-tz">Tokyo</div>
       </div>
@@ -429,7 +438,7 @@
     <div class="screen-title">S3 &nbsp;一時停止中</div>
     <div class="screen-state">停止ボタン押下後</div>
     <div class="frame">
-      <div class="clock-area">
+      <div class="clock-area hidden">
         <div class="clock-time">14:32:10</div>
         <div class="clock-tz">Tokyo</div>
       </div>
@@ -468,8 +477,7 @@
     <div class="screen-title">S4 &nbsp;アラーム中</div>
     <div class="screen-state">00分00秒 到達後</div>
     <div class="frame alarm">
-      <div class="alarm-banner">タイマー終了</div>
-      <div class="clock-area">
+      <div class="clock-area hidden">
         <div class="clock-time">14:32:10</div>
         <div class="clock-tz">Tokyo</div>
       </div>
@@ -541,12 +549,12 @@
       <tr>
         <td>操作ボタン</td>
         <td>開始 / 停止・再開 / リセット / アラーム停止</td>
-        <td>状態に応じてラベル・活性状態・スタイルが切り替わる</td>
+        <td>状態に応じてラベル・活性状態・スタイルが切り替わる。アラーム停止後はS1へ戻る</td>
       </tr>
       <tr>
-        <td>アラームバナー</td>
-        <td>終了時に画面上部へ表示</td>
-        <td>アラーム停止ボタンで非表示になる</td>
+        <td>時計表示エリア</td>
+        <td>固定高さのコンテナ</td>
+        <td>S1のみ表示、S2-S4は <code>visibility: hidden</code> で領域を維持しつつ非表示</td>
       </tr>
     </tbody>
   </table>
