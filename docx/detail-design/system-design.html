@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>システム設計書 — ビジュアルバータイマー</title>
+<style>
+  :root {
+    --bg:       #f7f6f2;
+    --surface:  #ffffff;
+    --border:   #e2e0d8;
+    --border2:  #ccc9be;
+    --text:     #1a1a18;
+    --muted:    #6b6a64;
+    --hint:     #9c9a90;
+    --blue-bg:  #eef3fc;
+    --blue-bd:  #5580d0;
+    --blue-tx:  #1a3e90;
+    --rust-bg:  #fdf0e8;
+    --rust-bd:  #c8682a;
+    --rust-tx:  #7a3210;
+    --green-bg: #eef7ee;
+    --green-bd: #46a050;
+    --green-tx: #1e5c22;
+    --gray-bg:  #f2f0ea;
+    --gray-bd:  #9a9890;
+    --gray-tx:  #3a3a36;
+    --accent:   #2c5cc5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    background: var(--text);
+    color: #fff;
+    padding: 40px 48px 36px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .page-header h1 { font-size: 22px; font-weight: 600; letter-spacing: 0.02em; }
+  .page-header .meta { font-size: 12px; color: #aaa; margin-top: 4px; }
+  .page-header .version { font-size: 11px; color: #666; }
+
+  /* ── Section layout ── */
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 48px 0;
+  }
+  .section:last-child { padding-bottom: 64px; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hint);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 24px 0 10px;
+    color: var(--text);
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--hint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .card-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── Layer diagram ── */
+  .layer-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-bottom: 24px;
+  }
+
+  .layer {
+    border-radius: 8px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid;
+  }
+
+  .layer-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    min-width: 90px;
+  }
+
+  .layer-name {
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .layer-desc {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 2;
+  }
+
+  .layer-tech {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .pill-blue  { background: var(--blue-bg);  border-color: var(--blue-bd);  color: var(--blue-tx); }
+  .pill-rust  { background: var(--rust-bg);  border-color: var(--rust-bd);  color: var(--rust-tx); }
+  .pill-green { background: var(--green-bg); border-color: var(--green-bd); color: var(--green-tx); }
+  .pill-gray  { background: var(--gray-bg);  border-color: var(--gray-bd);  color: var(--gray-tx); }
+
+  .layer.l-ui    { background: var(--blue-bg);  border-color: var(--blue-bd); }
+  .layer.l-logic { background: #f5f0fc;          border-color: #8060c0; }
+  .layer.l-ipc   { background: var(--gray-bg);  border-color: var(--gray-bd); }
+  .layer.l-rust  { background: var(--rust-bg);  border-color: var(--rust-bd); }
+  .layer.l-os    { background: var(--green-bg); border-color: var(--green-bd); }
+
+  .layer.l-ui    .layer-label { color: var(--blue-tx); }
+  .layer.l-logic .layer-label { color: #5040a0; }
+  .layer.l-ipc   .layer-label { color: var(--gray-tx); }
+  .layer.l-rust  .layer-label { color: var(--rust-tx); }
+  .layer.l-os    .layer-label { color: var(--green-tx); }
+
+  /* ── Data flow diagram ── */
+  .flow-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: var(--surface);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--hint);
+    letter-spacing: 0.06em;
+    padding: 10px 16px;
+    background: var(--gray-bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  code {
+    font-family: 'Menlo', 'Courier New', monospace;
+    font-size: 11px;
+    background: var(--gray-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--rust-tx);
+  }
+
+  /* ── Component list ── */
+  .comp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 24px;
+  }
+
+  .comp-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 180px 1fr auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .comp-name {
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Menlo', 'Courier New', monospace;
+    color: var(--blue-tx);
+  }
+
+  .comp-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── State table ── */
+  .state-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .state-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .state-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .state-detail {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .state-card.s-idle    { border-top: 3px solid var(--gray-bd); }
+  .state-card.s-run     { border-top: 3px solid var(--blue-bd); }
+  .state-card.s-pause   { border-top: 3px solid #9a9890; }
+  .state-card.s-done    { border-top: 3px solid var(--green-bd); }
+  .state-card.s-alarm   { border-top: 3px solid var(--rust-bd); }
+
+  /* ── Segment calc visual ── */
+  .seg-visual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .seg-bar {
+    display: flex;
+    gap: 3px;
+    margin: 12px 0 8px;
+  }
+
+  .seg {
+    flex: 1;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--text);
+  }
+
+  .seg.off { background: var(--border); }
+
+  .seg-caption {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── IPC command table ── */
+  .ipc-row {
+    display: grid;
+    grid-template-columns: 200px 120px 1fr;
+    gap: 0;
+  }
+
+  /* ── divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 48px;
+  }
+
+  /* ── footer ── */
+  .page-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--hint);
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ Header ════ -->
+<div class="page-header">
+  <div>
+    <h1>システム設計書</h1>
+    <div class="meta">ビジュアルバータイマー &nbsp;／&nbsp; 詳細設計</div>
+  </div>
+  <div class="version">v1.0.0</div>
+</div>
+
+
+<!-- ════ 1. アーキテクチャ概要 ════ -->
+<div class="section">
+  <div class="section-title">1 &nbsp;アーキテクチャ概要</div>
+
+  <div class="card-row-3">
+    <div class="card">
+      <div class="card-title">フレームワーク</div>
+      <div class="card-value">Tauri v2</div>
+      <div class="card-desc">Rust + WebView ベースのデスクトップアプリ</div>
+    </div>
+    <div class="card">
+      <div class="card-title">フロントエンド</div>
+      <div class="card-value">React 18</div>
+      <div class="card-desc">TypeScript + CSS Modules + Vite</div>
+    </div>
+    <div class="card">
+      <div class="card-title">バックエンド</div>
+      <div class="card-value">Rust</div>
+      <div class="card-desc">tokio / rodio / tauri-plugin-notification</div>
+    </div>
+  </div>
+
+  <div class="layer-diagram">
+    <div class="layer l-ui">
+      <span class="layer-label">UI Layer</span>
+      <span class="layer-name">React コンポーネント</span>
+      <span class="layer-desc">Clock / VisualBar / TimeDisplay / Controls / AlarmBanner</span>
+      <div class="layer-tech">
+        <span class="pill pill-blue">React 18</span>
+        <span class="pill pill-blue">TypeScript</span>
+        <span class="pill pill-blue">CSS Modules</span>
+      </div>
+    </div>
+    <div class="layer l-logic">
+      <span class="layer-label">Logic Layer</span>
+      <span class="layer-name">カスタムフック・状態管理</span>
+      <span class="layer-desc">useClock / useTimer / useAlarm / timerReducer</span>
+      <div class="layer-tech">
+        <span class="pill" style="background:#f0ebfc;border-color:#8060c0;color:#4030a0;">useReducer</span>
+        <span class="pill" style="background:#f0ebfc;border-color:#8060c0;color:#4030a0;">カスタムフック</span>
+      </div>
+    </div>
+    <div class="layer l-ipc">
+      <span class="layer-label">IPC Layer</span>
+      <span class="layer-name">Tauri コマンド / イベント</span>
+      <span class="layer-desc">invoke() でRustを呼び出し。emit() でフロントへ通知</span>
+      <div class="layer-tech">
+        <span class="pill pill-gray">invoke</span>
+        <span class="pill pill-gray">emit / listen</span>
+      </div>
+    </div>
+    <div class="layer l-rust">
+      <span class="layer-label">Rust Layer</span>
+      <span class="layer-name">タイマー精度・音声・通知</span>
+      <span class="layer-desc">timer.rs / alarm.rs / notification.rs</span>
+      <div class="layer-tech">
+        <span class="pill pill-rust">tokio</span>
+        <span class="pill pill-rust">rodio</span>
+        <span class="pill pill-rust">tauri-plugin-notification</span>
+      </div>
+    </div>
+    <div class="layer l-os">
+      <span class="layer-label">OS Layer</span>
+      <span class="layer-name">OS ネイティブリソース</span>
+      <span class="layer-desc">WebView / 通知センター / オーディオドライバ</span>
+      <div class="layer-tech">
+        <span class="pill pill-green">Windows</span>
+        <span class="pill pill-green">macOS</span>
+        <span class="pill pill-green">Linux</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ════ 2. データフロー ════ -->
+<div class="section">
+  <div class="section-title">2 &nbsp;データフロー</div>
+
+  <div class="flow-diagram">
+    <svg width="100%" viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#888" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#5580d0" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#c8682a" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+        <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5"
+          markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#46a050" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Frontend box -->
+      <rect x="40" y="60" width="200" height="200" rx="10"
+        fill="#eef3fc" stroke="#5580d0" stroke-width="1"/>
+      <text x="140" y="90" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="13" font-weight="600" fill="#1a3e90">フロントエンド</text>
+      <text x="140" y="108" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="11" fill="#6b6a64">React + TypeScript</text>
+
+      <rect x="64" y="124" width="152" height="28" rx="5"
+        fill="#fff" stroke="#c0cce8" stroke-width="0.8"/>
+      <text x="140" y="142" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#1a3e90">useTimer</text>
+
+      <rect x="64" y="160" width="152" height="28" rx="5"
+        fill="#fff" stroke="#c0cce8" stroke-width="0.8"/>
+      <text x="140" y="178" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#1a3e90">VisualBar</text>
+
+      <rect x="64" y="196" width="152" height="28" rx="5"
+        fill="#fff" stroke="#c0cce8" stroke-width="0.8"/>
+      <text x="140" y="214" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#1a3e90">useAlarm</text>
+
+      <!-- IPC box -->
+      <rect x="330" y="100" width="180" height="120" rx="10"
+        fill="#f5f4f0" stroke="#9a9890" stroke-width="1"/>
+      <text x="420" y="128" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="13" font-weight="600" fill="#3a3a36">Tauri IPC</text>
+      <text x="420" y="148" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#6b6a64">invoke / emit</text>
+      <line x1="360" y1="168" x2="480" y2="168"
+        stroke="#ccc9be" stroke-width="0.6" stroke-dasharray="4 3"/>
+      <text x="420" y="186" text-anchor="middle"
+        font-family="monospace" font-size="10" fill="#9c9a90">コマンド</text>
+      <text x="420" y="202" text-anchor="middle"
+        font-family="monospace" font-size="10" fill="#9c9a90">イベント</text>
+
+      <!-- Backend box -->
+      <rect x="600" y="60" width="220" height="200" rx="10"
+        fill="#fdf0e8" stroke="#c8682a" stroke-width="1"/>
+      <text x="710" y="90" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="13" font-weight="600" fill="#7a3210">バックエンド (Rust)</text>
+
+      <rect x="624" y="108" width="172" height="28" rx="5"
+        fill="#fff" stroke="#e8c0a0" stroke-width="0.8"/>
+      <text x="710" y="126" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#7a3210">timer.rs (tokio)</text>
+
+      <rect x="624" y="144" width="172" height="28" rx="5"
+        fill="#fff" stroke="#e8c0a0" stroke-width="0.8"/>
+      <text x="710" y="162" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#7a3210">alarm.rs (rodio)</text>
+
+      <rect x="624" y="180" width="172" height="28" rx="5"
+        fill="#fff" stroke="#e8c0a0" stroke-width="0.8"/>
+      <text x="710" y="198" text-anchor="middle"
+        font-family="monospace" font-size="11" fill="#7a3210">notification.rs</text>
+
+      <!-- Arrows FE → IPC -->
+      <path d="M242 138 L328 148" fill="none" stroke="#5580d0" stroke-width="1.2" marker-end="url(#ab)"/>
+      <text x="278" y="134" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="10" fill="#5580d0">invoke</text>
+
+      <!-- IPC → BE -->
+      <path d="M512 148 L598 138" fill="none" stroke="#c8682a" stroke-width="1.2" marker-end="url(#ar)"/>
+      <text x="556" y="134" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="10" fill="#c8682a">コマンド</text>
+
+      <!-- BE → IPC (return) -->
+      <path d="M598 178 L512 188" fill="none" stroke="#46a050" stroke-width="1.2" marker-end="url(#ag)"/>
+      <text x="556" y="200" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="10" fill="#46a050">emit</text>
+
+      <!-- IPC → FE (return) -->
+      <path d="M328 188 L242 198" fill="none" stroke="#46a050" stroke-width="1.2" marker-end="url(#ag)"/>
+      <text x="278" y="210" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="10" fill="#46a050">listen</text>
+
+      <!-- labels bottom -->
+      <text x="140" y="288" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="11" fill="#9c9a90">UI 描画・状態更新</text>
+      <text x="420" y="252" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="11" fill="#9c9a90">Tauri Bridge</text>
+      <text x="710" y="288" text-anchor="middle"
+        font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
+        font-size="11" fill="#9c9a90">精度・音声・通知</text>
+    </svg>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>方向</th>
+        <th>種別</th>
+        <th>名称</th>
+        <th>ペイロード</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="pill pill-blue" style="font-size:10px;">FE → Rust</span></td>
+        <td>invoke</td>
+        <td><code>start_timer</code></td>
+        <td><code>{ minutes: u32 }</code></td>
+        <td>タイマー開始。設定分数を渡す</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-blue" style="font-size:10px;">FE → Rust</span></td>
+        <td>invoke</td>
+        <td><code>pause_timer</code></td>
+        <td>なし</td>
+        <td>タイマーを一時停止する</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-blue" style="font-size:10px;">FE → Rust</span></td>
+        <td>invoke</td>
+        <td><code>resume_timer</code></td>
+        <td>なし</td>
+        <td>一時停止中のタイマーを再開する</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-blue" style="font-size:10px;">FE → Rust</span></td>
+        <td>invoke</td>
+        <td><code>reset_timer</code></td>
+        <td>なし</td>
+        <td>タイマーを初期状態に戻す</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-blue" style="font-size:10px;">FE → Rust</span></td>
+        <td>invoke</td>
+        <td><code>play_alarm</code></td>
+        <td>なし</td>
+        <td>アラーム音の再生を開始する</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-blue" style="font-size:10px;">FE → Rust</span></td>
+        <td>invoke</td>
+        <td><code>stop_alarm</code></td>
+        <td>なし</td>
+        <td>アラーム音を停止する</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-green" style="font-size:10px;">Rust → FE</span></td>
+        <td>emit</td>
+        <td><code>timer_tick</code></td>
+        <td><code>{ remaining_sec: u32 }</code></td>
+        <td>1秒ごとに残り秒数を送信する</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-green" style="font-size:10px;">Rust → FE</span></td>
+        <td>emit</td>
+        <td><code>timer_finished</code></td>
+        <td>なし</td>
+        <td>残り時間が0になったことを通知する</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ════ 3. コンポーネント設計 ════ -->
+<div class="section">
+  <div class="section-title">3 &nbsp;コンポーネント設計</div>
+
+  <div class="comp-list">
+    <div class="comp-item">
+      <span class="comp-name">App.tsx</span>
+      <span class="comp-desc">Clock と Timer を縦に配置するルートコンポーネント。グローバルCSSを読み込む</span>
+      <span class="pill pill-blue">container</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-name">Clock</span>
+      <span class="comp-desc"><code>useClock</code> フックから現在時刻とタイムゾーンを受け取り表示する。セレクトで切替</span>
+      <span class="pill pill-blue">表示</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-name">Timer</span>
+      <span class="comp-desc">VisualBar / TimeDisplay / Controls / AlarmBanner を束ねる。<code>useTimer</code> を呼ぶ</span>
+      <span class="pill pill-blue">container</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-name">VisualBar</span>
+      <span class="comp-desc">props に <code>lit: number</code>（0〜30）を受け取り、点灯・消灯セグメントを描画する</span>
+      <span class="pill pill-blue">表示</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-name">TimeDisplay</span>
+      <span class="comp-desc">props に <code>remainingSec: number</code> を受け取り <code>MM分SS秒</code> 形式で表示する</span>
+      <span class="pill pill-blue">表示</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-name">Controls</span>
+      <span class="comp-desc">タイマー状態（<code>TimerState</code>）を受け取り、操作可能なボタンのみ活性化して表示する</span>
+      <span class="pill pill-blue">操作</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-name">AlarmBanner</span>
+      <span class="comp-desc"><code>isAlarm: boolean</code> が true のとき画面上部にバナーを表示する。停止ボタンを持つ</span>
+      <span class="pill pill-rust">アラーム</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ════ 4. 状態管理 ════ -->
+<div class="section">
+  <div class="section-title">4 &nbsp;状態管理</div>
+
+  <div class="state-grid">
+    <div class="state-card s-idle">
+      <div class="state-name">IDLE</div>
+      <div class="state-detail">未開始<br>初期 / リセット後</div>
+    </div>
+    <div class="state-card s-run">
+      <div class="state-name">RUNNING</div>
+      <div class="state-detail">実行中<br>カウントダウン中</div>
+    </div>
+    <div class="state-card s-pause">
+      <div class="state-name">PAUSED</div>
+      <div class="state-detail">一時停止<br>再開待ち</div>
+    </div>
+    <div class="state-card s-done">
+      <div class="state-name">FINISHED</div>
+      <div class="state-detail">終了<br>00分00秒 到達</div>
+    </div>
+    <div class="state-card s-alarm">
+      <div class="state-name">ALARM</div>
+      <div class="state-detail">アラーム中<br>停止操作待ち</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>アクション</th>
+        <th>遷移前</th>
+        <th>遷移後</th>
+        <th>副作用</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>SET_MINUTES</code></td>
+        <td>IDLE</td>
+        <td>IDLE</td>
+        <td>selectedMinutes を更新</td>
+      </tr>
+      <tr>
+        <td><code>START</code></td>
+        <td>IDLE</td>
+        <td>RUNNING</td>
+        <td><code>invoke("start_timer")</code> を呼ぶ</td>
+      </tr>
+      <tr>
+        <td><code>PAUSE</code></td>
+        <td>RUNNING</td>
+        <td>PAUSED</td>
+        <td><code>invoke("pause_timer")</code> を呼ぶ</td>
+      </tr>
+      <tr>
+        <td><code>RESUME</code></td>
+        <td>PAUSED</td>
+        <td>RUNNING</td>
+        <td><code>invoke("resume_timer")</code> を呼ぶ</td>
+      </tr>
+      <tr>
+        <td><code>TICK</code></td>
+        <td>RUNNING</td>
+        <td>RUNNING</td>
+        <td>remainingSec を更新</td>
+      </tr>
+      <tr>
+        <td><code>FINISH</code></td>
+        <td>RUNNING</td>
+        <td>ALARM</td>
+        <td><code>invoke("play_alarm")</code> を呼ぶ</td>
+      </tr>
+      <tr>
+        <td><code>STOP_ALARM</code></td>
+        <td>ALARM</td>
+        <td>IDLE</td>
+        <td><code>invoke("stop_alarm")</code> を呼ぶ</td>
+      </tr>
+      <tr>
+        <td><code>RESET</code></td>
+        <td>RUNNING / PAUSED</td>
+        <td>IDLE</td>
+        <td><code>invoke("reset_timer")</code> を呼ぶ</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ════ 5. ビジュアルバー計算ロジック ════ -->
+<div class="section">
+  <div class="section-title">5 &nbsp;ビジュアルバー計算ロジック</div>
+
+  <div class="seg-visual">
+    <p style="margin:0 0 4px;font-size:13px;font-weight:600;color:var(--text);">点灯セグメント数の計算式</p>
+    <p style="margin:0;font-size:13px;color:var(--muted);">
+      lit = Math.ceil( remainingSec / totalSec × 30 )
+    </p>
+
+    <div style="margin-top:16px;">
+      <p style="margin:0 0 4px;font-size:12px;color:var(--muted);">30分設定・残り18分23秒（1103秒 / 1800秒）→ lit = 19</p>
+      <div class="seg-bar">
+        <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        <div class="seg"></div>
+        <div class="seg off"></div><div class="seg off"></div><div class="seg off"></div>
+        <div class="seg off"></div><div class="seg off"></div><div class="seg off"></div>
+        <div class="seg off"></div><div class="seg off"></div><div class="seg off"></div>
+        <div class="seg off"></div><div class="seg off"></div>
+      </div>
+      <div class="seg-caption">
+        <span>点灯 19</span>
+        <span>消灯 11</span>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>設定時間</th>
+        <th>1セグメントの時間</th>
+        <th>残り15分のときの lit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>60分</td><td>2分</td><td>8（= ceil(900/3600×30)）</td></tr>
+      <tr><td>30分</td><td>1分</td><td>15（= ceil(900/1800×30)）</td></tr>
+      <tr><td>15分</td><td>30秒</td><td>30（= ceil(900/900×30)）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+
+<!-- ════ 6. 非機能要件への対応 ════ -->
+<div class="section">
+  <div class="section-title">6 &nbsp;非機能要件への対応</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>要件</th>
+        <th>設計上の対応</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>タイマー誤差 ±1秒以内</td>
+        <td>Rustの <code>tokio::time::interval</code> を使用。JavaScriptの <code>setInterval</code> は使わない。Rustからイベントで通知し、フロントは表示のみを担当する</td>
+      </tr>
+      <tr>
+        <td>低CPU使用率</td>
+        <td>Tauriはシステム搭載のWebViewを利用するためChromiumを内包しない。Rustの非同期タイマーはCPUをブロックしない</td>
+      </tr>
+      <tr>
+        <td>長時間動作の安定性</td>
+        <td>Rustのメモリ安全性によりメモリリークを防止。フロントエンドのイベントリスナーはアンマウント時に <code>unlisten()</code> で解除する</td>
+      </tr>
+      <tr>
+        <td>クロスプラットフォーム</td>
+        <td>Tauriが各OSのWebViewとネイティブAPIを抽象化。音声は <code>rodio</code>、通知は <code>tauri-plugin-notification</code> が各OS向けに対応</td>
+      </tr>
+      <tr>
+        <td>オフライン動作</td>
+        <td>外部APIへの通信なし。すべての処理はローカルで完結する</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ════ Footer ════ -->
+<div class="page-footer">
+  ビジュアルバータイマーアプリ &nbsp;システム設計書 &nbsp;v1.0.0
+</div>
+
+</body>
+</html>
