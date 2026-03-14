@@ -208,6 +208,28 @@
     align-items: center;
     justify-content: center;
     color: #555;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .setter-btn.minus {
+    background: #fff5f5;
+    border-color: #feb2b2;
+    color: #e53e3e;
+  }
+
+  .setter-btn.minus:hover {
+    background: #fed7d7;
+  }
+
+  .setter-btn.plus {
+    background: #ebf8ff;
+    border-color: #90cdf4;
+    color: #3182ce;
+  }
+
+  .setter-btn.plus:hover {
+    background: #bee3f8;
   }
 
   .setter-val {
@@ -394,9 +416,9 @@
       </div>
       <div class="timer-area">
         <div class="time-setter">
-          <div class="setter-btn">−</div>
+          <div class="setter-btn minus">−</div>
           <div class="setter-val">30<span class="setter-unit" style="font-size:14px;">分</span></div>
-          <div class="setter-btn">+</div>
+          <div class="setter-btn plus">+</div>
         </div>
         <div class="bar-row">
           <div class="segments">
@@ -568,7 +590,7 @@
       <tr>
         <td>時間設定</td>
         <td>＋／−ボタンで分単位を増減</td>
-        <td>範囲：1〜60分。秒単位の設定は不可</td>
+        <td>範囲：1〜60分。－は赤、＋は青のUIで直感的に操作可能</td>
       </tr>
       <tr>
         <td>ビジュアルバー</td>
