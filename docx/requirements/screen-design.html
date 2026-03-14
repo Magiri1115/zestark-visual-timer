@@ -66,14 +66,16 @@
     background: #fff;
     border: 1.5px solid #d8d6d0;
     border-radius: 16px;
-    padding: 28px 20px 24px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: center; /* 垂直方向に中央寄せ */
+    align-items: center; /* 水平方向に中央寄せ */
+    gap: 24px;
     position: relative;
     width: 320px; /* 固定幅 */
-    height: auto;
-    min-height: 360px; /* 固定最小高さ */
+    height: 360px; /* 固定高さに変更 */
+    overflow: hidden;
   }
 
   .frame.alarm {
@@ -86,7 +88,8 @@
     text-align: center;
     padding-bottom: 16px;
     border-bottom: 1px solid #eee;
-    height: 72px; /* レイアウト崩れ防止のための固定高さ */
+    width: 100%;
+    height: 80px; /* 少し余裕を持たせる */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -146,7 +149,8 @@
   .timer-area {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
+    width: 100%;
   }
 
   .bar-row {
@@ -525,7 +529,7 @@
           <div class="time-display">00分00秒</div>
         </div>
         <div class="btn-row">
-          <div class="btn alarm-stop">ここを押して止める！</div>
+          <div class="btn alarm-stop">止める！</div>
         </div>
       </div>
       <div class="clock-area">
