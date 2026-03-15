@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+.pnpm-store/
+dist/
+.DS_Store
+*.log
+
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
+src-tauri/bin/
+
+# Environment variables
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
