@@ -8,6 +8,10 @@ edition = "2021"
 [build-dependencies]
 tauri-build = "2"
 
+[lib]
+name = "zestark_visual_timer_lib"
+path = "src/lib.rs"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
