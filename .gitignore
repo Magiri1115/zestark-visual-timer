@@ -35,8 +35,8 @@ src-tauri/bin/
 *.swp
 *.swo
 
-# Documentation (generated)
-docx/**/*.html
+# Documentation (Private / Design documents)
+docx/
 
 # Tauri icons (auto-generated, keep only essentials in Git if preferred)
 src-tauri/icons/android/
