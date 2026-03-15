@@ -70,4 +70,5 @@ jobs:
         run: pnpm build
 
       - name: cargo check
-        run: cd src-tauri && cargo check --verbose
+        working-directory: src-tauri
+        run: cargo check --verbose
