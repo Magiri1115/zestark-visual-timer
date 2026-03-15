@@ -1,175 +1,53 @@
-# 環境構築
+# 環境構築（ローカル開発 & GitHub Actions）
 
 ## 1. 前提条件
 
-以下がインストール済みであること。
+Tauri アプリの開発には、OSごとのビルドツールが必要です。
 
-| ツール | 最低バージョン | 確認コマンド |
+### 共通ツール
+| ツール | 確認コマンド | 役割 |
 |---|---|---|
-| Node.js | 20.x LTS | `node -v` |
-| pnpm | 9.x | `pnpm -v` |
-| Rust (rustup) | stable | `rustc --version` |
-| Git | 2.x | `git --version` |
+| Node.js (LTS) | `node --version` | フロントエンド実行環境 |
+| pnpm | `pnpm --version` | パッケージマネージャー |
+| Rust | `rustc --version` | バックエンド（Tauri）言語 |
+
+### OSごとの依存関係
+- **Windows**: [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) および [C++ ビルドツール](https://visualstudio.microsoft.com/visual-cpp-build-tools/) が必要です。
+- **macOS**: Xcode Command Line Tools が必要です。
+- **Linux**: `libwebkit2gtk-4.1-dev` 等のシステムライブラリが必要です。
+
+詳細な手順は [Tauri 公式ドキュメント](https://v2.tauri.app/start/prerequisites/) を参照してください。
 
 ---
 
-## 2. OS別の追加要件
+## 2. 開発環境の起動方法
 
-### Windows
-
-```powershell
-# Microsoft C++ Build Tools が必要
-# Visual Studio Installer から "C++ によるデスクトップ開発" をインストールする
-# WebView2 は Windows 11 に標準搭載。Windows 10 は自動インストールされる
-```
-
-### macOS
+### 手順 1: プロジェクトのクローンと依存関係のインストール
 
 ```bash
-# Xcode Command Line Tools
-xcode-select --install
-```
-
-### Linux（Ubuntu / Debian 系）
-
-```bash
-sudo apt update
-sudo apt install -y \
-  libwebkit2gtk-4.1-dev \
-  libssl-dev \
-  libgtk-3-dev \
-  libayatana-appindicator3-dev \
-  librsvg2-dev \
-  libasound2-dev
-```
-
----
-
-## 3. Rust のセットアップ
-
-```bash
-# rustup のインストール（未インストールの場合）
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# stable ツールチェーンの確認
-rustup default stable
-rustup update
-
-# バージョン確認
-rustc --version
-cargo --version
-```
-
----
-
-## 4. プロジェクトの作成
-
-```bash
-# pnpm のインストール（未インストールの場合）
-npm install -g pnpm
-
-# Tauri CLI のインストール
-pnpm add -g @tauri-apps/cli
-
-# Tauri + React + TypeScript プロジェクトの作成
-pnpm create tauri-app@latest visual-bar-timer \
-  --template react-ts \
-  --manager pnpm
-
-cd visual-bar-timer
-
-# 依存パッケージのインストール
+git clone <repository-url>
+cd zestark-visual-timer
 pnpm install
 ```
 
----
-
-## 5. Tauri プラグインの追加
+### 手順 2: 開発サーバーの起動
 
 ```bash
-# デスクトップ通知プラグイン
-pnpm tauri add notification
-
-# 音声再生クレートの追加（Cargo.toml に追記）
-cd src-tauri
-cargo add rodio
-cargo add tokio --features full
-```
-
----
-
-## 6. 開発サーバーの起動
-
-```bash
-# プロジェクトルートで実行
+# フロントエンド + Tauri の同時起動
 pnpm tauri dev
 ```
 
-フロントエンド（Vite）とTauriウィンドウが同時に起動する。  
-ホットリロードにより、フロントエンドの変更はウィンドウに即時反映される。
+---
+
+## 3. GitHub Actions による自動ビルド・配布
+
+本プロジェクトでは、Docker の代わりに **GitHub Actions** を使用して、複数プラットフォーム向けのバイナリを自動生成します。
+
+- **CI (ビルドチェック)**: `main` ブランチへのプッシュまたは PR 時に、フロントエンドと Rust のビルドチェックが自動実行されます。
+- **リリース**: `main` ブランチにプッシュされると、Windows/macOS/Linux 用のインストーラーが自動ビルドされ、GitHub Releases にドラフトとして作成されます。
 
 ---
 
-## 7. ビルド（本番）
+## 4. GitHub Packages / Artifacts の活用
 
-```bash
-# 各OSのネイティブインストーラーを生成
-pnpm tauri build
-```
-
-出力先：`src-tauri/target/release/bundle/`
-
-| OS | 生成物 |
-|---|---|
-| Windows | `.msi` / `.exe` |
-| macOS | `.dmg` / `.app` |
-| Linux | `.deb` / `.AppImage` |
-
----
-
-## 8. 推奨エディタ設定（VS Code）
-
-```bash
-# 推奨拡張機能
-code --install-extension rust-lang.rust-analyzer
-code --install-extension tauri-apps.tauri-vscode
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension esbenp.prettier-vscode
-```
-
-`.vscode/settings.json`
-
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "[rust]": {
-    "editor.defaultFormatter": "rust-lang.rust-analyzer"
-  },
-  "rust-analyzer.checkOnSave.command": "clippy"
-}
-```
-
----
-
-## 9. 環境変数
-
-本アプリはオフライン動作を前提とするため、環境変数は不要。  
-開発時のみ以下を `.env.local` に設定できる。
-
-```env
-# Vite 開発サーバーポート（任意）
-VITE_PORT=1420
-```
-
----
-
-## 10. トラブルシューティング
-
-| 症状 | 対処 |
-|---|---|
-| `cargo build` が失敗する | `rustup update` でツールチェーンを更新する |
-| Linux で WebView が表示されない | `libwebkit2gtk-4.1-dev` がインストールされているか確認する |
-| Windows で MSVC エラーが出る | C++ Build Tools が正しくインストールされているか確認する |
-| 音声が再生されない | Linux は `libasound2-dev` が必要。macOS / Windows は標準で動作する |
-| `pnpm tauri dev` が遅い | Rust の初回ビルドは数分かかる。2回目以降はキャッシュにより高速化される |
+ビルドされた成果物は GitHub の **Actions Artifacts** または **Releases** からダウンロード可能です。これにより、ローカル環境にすべてのビルドツールを揃えなくても、最終的な成果物を確認できます。
