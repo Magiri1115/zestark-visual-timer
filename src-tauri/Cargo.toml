@@ -6,7 +6,11 @@ authors = ["you"]
 edition = "2021"
 
 [build-dependencies]
-tauri-build = "2"
+tauri-build = { version = "2", features = [] }
+
+[lib]
+name = "zestark_visual_timer_lib"
+path = "src/lib.rs"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

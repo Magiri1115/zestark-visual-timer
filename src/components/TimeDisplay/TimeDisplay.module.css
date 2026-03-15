@@ -1,0 +1,49 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.config {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.timeValue {
+  font-size: 1.8rem;
+  font-weight: 500;
+  min-width: 100px;
+  text-align: center;
+}
+
+.timeText {
+  font-size: 2rem;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+}
+
+.btnPlus, .btnMinus {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.btnPlus {
+  background-color: var(--primary-color);
+}
+
+.btnMinus {
+  background-color: var(--secondary-color);
+}
+
+.btnPlus:hover, .btnMinus:hover {
+  opacity: 0.8;
+}

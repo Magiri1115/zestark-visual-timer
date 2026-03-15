@@ -1,0 +1,56 @@
+.controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.startBtn, .resumeBtn, .pauseBtn, .resetBtn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.startBtn, .resumeBtn {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.pauseBtn {
+  background-color: var(--secondary-color);
+  color: #fff;
+}
+
+.resetBtn {
+  background-color: #555;
+  color: #fff;
+}
+
+.startBtn:hover, .resumeBtn:hover, .pauseBtn:hover, .resetBtn:hover {
+  filter: brightness(1.2);
+}
+
+.alarmContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.stopAlarmBtn {
+  background-color: var(--secondary-color);
+  color: #fff;
+  padding: 20px 40px;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
