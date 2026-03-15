@@ -18,13 +18,19 @@ pub async fn start_timer(
     state: tauri::State<'_, TimerState>,
     app_handle: AppHandle,
 ) -> Result<(), String> {
-    let mut tx_lock = state.tx.lock().unwrap();
-    if let Some(old_tx) = tx_lock.take() {
+    let old_tx = {
+        let mut tx_lock = state.tx.lock().unwrap();
+        tx_lock.take()
+    };
+    if let Some(old_tx) = old_tx {
         let _ = old_tx.send(()).await;
     }
 
     let (tx, mut rx) = mpsc::channel(1);
-    *tx_lock = Some(tx);
+    {
+        let mut tx_lock = state.tx.lock().unwrap();
+        *tx_lock = Some(tx);
+    }
 
     let mut remaining_sec = minutes * 60;
 
@@ -52,8 +58,11 @@ pub async fn start_timer(
 
 #[tauri::command]
 pub async fn stop_timer(state: tauri::State<'_, TimerState>) -> Result<(), String> {
-    let mut tx_lock = state.tx.lock().unwrap();
-    if let Some(tx) = tx_lock.take() {
+    let tx = {
+        let mut tx_lock = state.tx.lock().unwrap();
+        tx_lock.take()
+    };
+    if let Some(tx) = tx {
         let _ = tx.send(()).await;
     }
     Ok(())

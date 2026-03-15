@@ -5,8 +5,14 @@ use std::sync::{Arc, Mutex};
 
 pub struct AlarmState {
     pub sink: Arc<Mutex<Option<Sink>>>,
-    pub _stream: Arc<Mutex<Option<OutputStream>>>,
+    pub _stream: Arc<Mutex<Option<SendOutputStream>>>,
 }
+
+/// rodio's OutputStream is not Send/Sync, so we wrap it and unsafe impl Send/Sync.
+/// This is safe because we only hold it in a Mutex and it's dropped when the alarm stops.
+pub struct SendOutputStream(pub OutputStream);
+unsafe impl Send for SendOutputStream {}
+unsafe impl Sync for SendOutputStream {}
 
 #[tauri::command]
 pub fn play_alarm(state: tauri::State<'_, AlarmState>) -> Result<(), String> {
@@ -25,7 +31,7 @@ pub fn play_alarm(state: tauri::State<'_, AlarmState>) -> Result<(), String> {
     *sink_lock = Some(sink);
     
     let mut stream_lock = state._stream.lock().unwrap();
-    *stream_lock = Some(stream);
+    *stream_lock = Some(SendOutputStream(stream));
 
     Ok(())
 }
@@ -36,5 +42,7 @@ pub fn stop_alarm(state: tauri::State<'_, AlarmState>) -> Result<(), String> {
     if let Some(sink) = sink_lock.take() {
         sink.stop();
     }
+    let mut stream_lock = state._stream.lock().unwrap();
+    *stream_lock = None;
     Ok(())
 }
