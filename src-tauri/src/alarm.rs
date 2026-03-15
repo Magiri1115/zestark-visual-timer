@@ -16,21 +16,26 @@ unsafe impl Sync for SendOutputStream {}
 
 #[tauri::command]
 pub fn play_alarm(state: tauri::State<'_, AlarmState>) -> Result<(), String> {
+    play_alarm_impl(state.sink.clone(), state._stream.clone())
+}
+
+pub fn play_alarm_impl(
+    sink_mutex: Arc<Mutex<Option<Sink>>>,
+    stream_mutex: Arc<Mutex<Option<SendOutputStream>>>,
+) -> Result<(), String> {
     let (stream, stream_handle) = OutputStream::try_default().map_err(|e| e.to_string())?;
     let sink = Sink::try_new(&stream_handle).map_err(|e| e.to_string())?;
 
-    // 本来はアセットから読み込むが、ここではパス指定とする
-    // docx/detail-design/file-structure.md に基づき、src-tauri/assets/alarm.ogg を使用
     let file = File::open("assets/alarm.ogg").map_err(|e| e.to_string())?;
     let source = Decoder::new(BufReader::new(file)).map_err(|e| e.to_string())?;
 
     sink.append(source);
     sink.play();
 
-    let mut sink_lock = state.sink.lock().unwrap();
+    let mut sink_lock = sink_mutex.lock().unwrap();
     *sink_lock = Some(sink);
     
-    let mut stream_lock = state._stream.lock().unwrap();
+    let mut stream_lock = stream_mutex.lock().unwrap();
     *stream_lock = Some(SendOutputStream(stream));
 
     Ok(())
