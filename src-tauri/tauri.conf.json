@@ -34,7 +34,5 @@
       "icons/icon.icns"
     ]
   },
-  "plugins": {
-    "notification": {}
-  }
+  "plugins": {}
 }
