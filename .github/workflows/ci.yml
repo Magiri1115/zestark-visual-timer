@@ -69,5 +69,7 @@ jobs:
       - name: build frontend
         run: pnpm build
 
-      - name: tauri check
-        run: pnpm tauri check
+      - name: cargo check
+        run: |
+          cd src-tauri
+          cargo check --all-targets --all-features --verbose
