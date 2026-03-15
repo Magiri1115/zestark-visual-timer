@@ -25,12 +25,12 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({ remainingSeconds, status, tot
       {status === 'S1' ? (
         <div className={styles.config}>
           <button className={styles.btnMinus} onClick={decrement}>－</button>
-          <span className={styles.timeValue}>{totalMinutes}分00秒</span>
+          <span className={styles.timeValue} data-testid="timer-value">{totalMinutes}分00秒</span>
           <button className={styles.btnPlus} onClick={increment}>＋</button>
         </div>
       ) : (
         <div className={styles.display}>
-          <span className={styles.timeText}>{timeStr}</span>
+          <span className={styles.timeText} data-testid="timer-value">{timeStr}</span>
         </div>
       )}
     </div>

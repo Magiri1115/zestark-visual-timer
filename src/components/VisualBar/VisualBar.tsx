@@ -16,6 +16,7 @@ const VisualBar: React.FC<VisualBarProps> = ({ remainingSeconds, totalMinutes })
         <div 
           key={i} 
           className={`${styles.segment} ${i >= 30 - activeSegments ? styles.active : ''}`}
+          data-testid="segment"
         />
       ))}
     </div>

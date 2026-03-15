@@ -14,7 +14,7 @@ const Clock: React.FC<ClockProps> = ({ timezone, onTimezoneChange, status }) => 
 
   return (
     <div className={`${styles.clockContainer} ${status === 'S1' ? styles.top : styles.bottom}`}>
-      <div className={styles.time}>{timeStr}</div>
+      <div className={styles.time} data-testid="current-time">{timeStr}</div>
       <div className={styles.timezoneInfo}>
         {status === 'S1' ? (
           <select 

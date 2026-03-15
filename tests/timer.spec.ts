@@ -11,14 +11,14 @@ test.describe('Visual Bar Timer', () => {
     await expect(clock).toBeVisible();
     
     // Time should be in HH:MM:SS format
-    const time = page.locator('div[class*="time"]');
+    const time = page.getByTestId('current-time');
     await expect(time).toHaveText(/\d{2}:\d{2}:\d{2}/);
   });
 
   test('should allow setting timer between 1 and 60 minutes', async ({ page }) => {
-    const timeValue = page.locator('span[class*="timeValue"]');
-    const plusBtn = page.locator('button[class*="btnPlus"]');
-    const minusBtn = page.locator('button[class*="btnMinus"]');
+    const timeValue = page.getByTestId('timer-value');
+    const plusBtn = page.getByRole('button', { name: '＋' });
+    const minusBtn = page.getByRole('button', { name: '－' });
 
     // Default is 30
     await expect(timeValue).toHaveText('30分00秒');
@@ -34,7 +34,7 @@ test.describe('Visual Bar Timer', () => {
   });
 
   test('should display 30 segments in visual bar', async ({ page }) => {
-    const segments = page.locator('div[class*="segment"]');
+    const segments = page.getByTestId('segment');
     await expect(segments).toHaveCount(30);
   });
 
