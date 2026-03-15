@@ -1,0 +1,22 @@
+[package]
+name = "zestark-visual-timer"
+version = "0.1.0"
+description = "A visual bar timer application"
+authors = ["you"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = "2"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tauri = { version = "2", features = ["devtools"] }
+tauri-plugin-notification = "2"
+tokio = { version = "1.37", features = ["full"] }
+rodio = "0.19"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
