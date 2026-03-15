@@ -1,66 +1,53 @@
-# 環境構築（Docker/Dev Container）
+# 環境構築（ローカル開発 & GitHub Actions）
 
 ## 1. 前提条件
 
-ローカル環境には以下のツールのみが必要です。
+Tauri アプリの開発には、OSごとのビルドツールが必要です。
 
+### 共通ツール
 | ツール | 確認コマンド | 役割 |
 |---|---|---|
-| Docker Desktop | `docker --version` | 開発環境のコンテナ化 |
-| VS Code | `code --version` | 推奨エディタ |
-| Dev Containers (拡張機能) | - | VS Code 内でコンテナを開くため |
+| Node.js (LTS) | `node --version` | フロントエンド実行環境 |
+| pnpm | `pnpm --version` | パッケージマネージャー |
+| Rust | `rustc --version` | バックエンド（Tauri）言語 |
 
-**※ ローカルに Node.js, pnpm, Rust, Cargo をインストールする必要はありません。**
+### OSごとの依存関係
+- **Windows**: [WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) および [C++ ビルドツール](https://visualstudio.microsoft.com/visual-cpp-build-tools/) が必要です。
+- **macOS**: Xcode Command Line Tools が必要です。
+- **Linux**: `libwebkit2gtk-4.1-dev` 等のシステムライブラリが必要です。
+
+詳細な手順は [Tauri 公式ドキュメント](https://v2.tauri.app/start/prerequisites/) を参照してください。
 
 ---
 
 ## 2. 開発環境の起動方法
 
-### 手順 1: プロジェクトを VS Code で開く
+### 手順 1: プロジェクトのクローンと依存関係のインストール
 
 ```bash
-code zestark-visual-timer
+git clone <repository-url>
+cd zestark-visual-timer
+pnpm install
 ```
 
-### 手順 2: コンテナをビルド・起動する
-
-1. VS Code 右下に表示される **「Reopen in Container」** ポップアップをクリック。
-2. または、コマンドパレット（`Ctrl+Shift+P`）から **`Dev Containers: Reopen in Container`** を選択。
-
-### 手順 3: 依存関係のインストール（自動）
-
-コンテナ起動時に `pnpm install` が自動的に実行されます。
-
----
-
-## 3. 開発コマンド（コンテナ内）
-
-VS Code の内蔵ターミナル（コンテナ内）で実行します。
+### 手順 2: 開発サーバーの起動
 
 ```bash
-# フロントエンドの開発サーバー起動
-pnpm dev
-
-# Tauri アプリのビルド・実行（Linux/WSL2環境でGUI表示が必要）
+# フロントエンド + Tauri の同時起動
 pnpm tauri dev
 ```
 
 ---
 
-## 4. GitHub Actions でのビルド
+## 3. GitHub Actions による自動ビルド・配布
 
-ローカルでのビルドが困難な場合、GitHub にプッシュするだけで Actions が自動的に実行バイナリを生成します。
+本プロジェクトでは、Docker の代わりに **GitHub Actions** を使用して、複数プラットフォーム向けのバイナリを自動生成します。
 
-```bash
-git push origin main
-```
+- **CI (ビルドチェック)**: `main` ブランチへのプッシュまたは PR 時に、フロントエンドと Rust のビルドチェックが自動実行されます。
+- **リリース**: `main` ブランチにプッシュされると、Windows/macOS/Linux 用のインストーラーが自動ビルドされ、GitHub Releases にドラフトとして作成されます。
 
 ---
 
-## 5. Docker 構成の仕組み
+## 4. GitHub Packages / Artifacts の活用
 
-- **[Dockerfile.dev](Dockerfile.dev)**: `rust:1.77` をベースに Node.js, pnpm, Tauri 依存パッケージをプリインストールした開発用イメージ。
-- **[docker-compose.yml](docker-compose.yml)**: 
-  - ホストのソースコードを `/app` にマウント。
-  - `pnpm-cache`, `cargo-cache` などのボリュームを使用して、再起動時のビルド速度を高速化。
-- **[.devcontainer/devcontainer.json](.devcontainer/devcontainer.json)**: VS Code の開発環境をコンテナと連携させる設定。
+ビルドされた成果物は GitHub の **Actions Artifacts** または **Releases** からダウンロード可能です。これにより、ローカル環境にすべてのビルドツールを揃えなくても、最終的な成果物を確認できます。
