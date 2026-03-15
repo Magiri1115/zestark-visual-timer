@@ -19,8 +19,8 @@ export const useTimer = (dispatch: React.Dispatch<TimerAction>) => {
     };
   }, [dispatch]);
 
-  const startTimer = async (minutes: number) => {
-    await invoke('start_timer', { minutes });
+  const startTimer = async (seconds: number) => {
+    await invoke('start_timer', { seconds });
     dispatch({ type: 'START' });
   };
 

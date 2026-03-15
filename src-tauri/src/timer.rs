@@ -3,6 +3,9 @@ use tauri::{AppHandle, Emitter};
 use tokio::sync::mpsc;
 use tokio::time::{self, Duration};
 
+use crate::alarm::{AlarmState, play_alarm};
+use crate::notification::show_notification;
+
 #[derive(Clone, serde::Serialize)]
 struct TimerTickPayload {
     remaining_sec: u32,
@@ -14,8 +17,9 @@ pub struct TimerState {
 
 #[tauri::command]
 pub async fn start_timer(
-    minutes: u32,
+    seconds: u32,
     state: tauri::State<'_, TimerState>,
+    alarm_state: tauri::State<'_, AlarmState>,
     app_handle: AppHandle,
 ) -> Result<(), String> {
     let old_tx = {
@@ -32,7 +36,7 @@ pub async fn start_timer(
         *tx_lock = Some(tx);
     }
 
-    let mut remaining_sec = minutes * 60;
+    let mut remaining_sec = seconds;
 
     tokio::spawn(async move {
         let mut interval = time::interval(Duration::from_secs(1));
@@ -42,6 +46,10 @@ pub async fn start_timer(
                     let _ = app_handle.emit("timer_tick", TimerTickPayload { remaining_sec });
                     if remaining_sec == 0 {
                         let _ = app_handle.emit("timer_finished", ());
+                        // アラームを鳴らす
+                        let _ = play_alarm(alarm_state);
+                        // 通知を表示する
+                        show_notification(app_handle.clone(), "Timer Finished".to_string(), "Your timer has finished!".to_string());
                         break;
                     }
                     remaining_sec -= 1;

@@ -40,7 +40,7 @@ const App: React.FC = () => {
             remainingSeconds={state.remainingSeconds}
             totalMinutes={state.totalMinutes}
             dispatch={dispatch}
-            onStart={() => startTimer(state.totalMinutes)}
+            onStart={() => startTimer(state.remainingSeconds)}
             onPause={stopTimer}
             onReset={resetTimer}
             onStopAlarm={handleStopAlarm}
