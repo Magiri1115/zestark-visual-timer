@@ -3,7 +3,7 @@ use tauri::{AppHandle, Emitter};
 use tokio::sync::mpsc;
 use tokio::time::{self, Duration};
 
-use crate::alarm::{AlarmState, play_alarm_impl};
+use crate::alarm::{AlarmState, play_alarm_inner};
 use crate::notification::show_notification;
 
 #[derive(Clone, serde::Serialize)]
@@ -40,6 +40,10 @@ pub async fn start_timer(
     let sink_mutex = alarm_state.sink.clone();
     let stream_mutex = alarm_state._stream.clone();
 
+    // spawn前にArcをクローン（'staticになるのでspawn内で使える）
+    let alarm_sink = Arc::clone(&alarm_state.sink);
+    let alarm_stream = Arc::clone(&alarm_state._stream);
+
     tokio::spawn(async move {
         let mut interval = time::interval(Duration::from_secs(1));
         loop {
@@ -48,8 +52,8 @@ pub async fn start_timer(
                     let _ = app_handle.emit("timer_tick", TimerTickPayload { remaining_sec });
                     if remaining_sec == 0 {
                         let _ = app_handle.emit("timer_finished", ());
-                        // アラームを鳴らす (共有ポインタを渡す)
-                        let _ = play_alarm_impl(sink_mutex, stream_mutex);
+                        // アラームを鳴らす
+                        let _ = play_alarm_inner(&alarm_sink, &alarm_stream);
                         // 通知を表示する
                         show_notification(app_handle.clone(), "Timer Finished".to_string(), "Your timer has finished!".to_string());
                         break;
