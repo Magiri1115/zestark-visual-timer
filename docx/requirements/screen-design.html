@@ -319,19 +319,15 @@
   }
 
 @keyframes pulse-active {
-
   0% {
     transform: scale(1.08);
   }
-
   40% {
     transform: scale(0.95);
   }
-
   100% {
     transform: scale(1.08);
   }
-
 }
 
 /* Alarm banner */
@@ -428,32 +424,22 @@ code {
 }
 
   /* ripple effect */
-
 .btn.alarm-stop {
-
   width: 120px;
   height: 120px;
-
   flex: none;
   border-radius: 50%;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 18px;
   font-weight: 800;
-
   background: #e07060;
   color: #fff;
-
   border: none;
   cursor: pointer;
-
   position: relative;
-
   box-shadow: 0 8px 24px rgba(224,112,96,0.45);
-
   animation: pulse-active 1.2s infinite;
 }
 
@@ -462,70 +448,54 @@ code {
 }
 
 .btn.alarm-stop::after {
-
   content: "";
   position: absolute;
-
   left: 50%;
   top: 50%;
-
   border-radius: 50%;
   border: 3px solid rgba(224,112,96,0.45);
-
   transform: translate(-50%, -50%);
-
   width: 10px;
   height: 10px;
-
   opacity: 0;
-
   animation: ripple-sync 1.2s infinite;
-
 }
 
 @keyframes ripple-sync {
-
   0% {
     width: 10px;
     height: 10px;
     opacity: 0;
   }
-
   /* pulse最小タイミング */
   40% {
     width: 10px;
     height: 10px;
     opacity: 0.8;
   }
-
   70% {
     width: 180px;
     height: 180px;
     opacity: 0.2;
   }
-
   100% {
     width: 240px;
     height: 240px;
     opacity: 0;
   }
-
 }
 
 @keyframes ripple-wave {
-
   0% {
     width: 20px;
     height: 20px;
     opacity: 0.8;
   }
-
   70% {
     width: 200px;
     height: 200px;
     opacity: 0.15;
   }
-
   100% {
     width: 260px;
     height: 260px;
