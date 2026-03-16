@@ -318,30 +318,6 @@
     cursor: not-allowed;
   }
 
-  /* Alarm Stop Button Special UX */
-  .btn.alarm-stop {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    font-size: 18px;
-    font-weight: 800;
-
-    background: #e07060;
-    color: #fff;
-    border: none;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-    cursor: pointer;
-
-    box-shadow: 0 8px 24px rgba(224,112,96,0.45);
-
-    animation: pulse-active 1.2s infinite;
-  }
-
 @keyframes pulse-active {
 
   0% {
@@ -483,22 +459,6 @@ code {
 
 .frame.alarm .btn-row {
   justify-content: center;
-}
-
-.btn.alarm-stop::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  border: 3px solid rgba(224,112,96,0.5);
-
-  width: 20px;
-  height: 20px;
-
-  left: 50%;
-  top: 50%;
-
-  transform: translate(-50%, -50%);
-  pointer-events: none;
 }
 
 .btn.alarm-stop::after {
