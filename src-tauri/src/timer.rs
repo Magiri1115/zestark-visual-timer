@@ -37,6 +37,8 @@ pub async fn start_timer(
     }
 
     let mut remaining_sec = seconds;
+    let sink_mutex = alarm_state.sink.clone();
+    let stream_mutex = alarm_state._stream.clone();
 
     // spawn前にArcをクローン（'staticになるのでspawn内で使える）
     let alarm_sink = Arc::clone(&alarm_state.sink);
