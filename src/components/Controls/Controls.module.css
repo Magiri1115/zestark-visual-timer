@@ -40,13 +40,22 @@
 }
 
 .stopAlarmBtn {
-  background-color: var(--secondary-color);
-  color: #fff;
-  padding: 20px 40px;
-  border-radius: 12px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  animation: pulse 1s infinite;
+    width: 120px;
+    height: 120px;
+    flex: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(224,112,96,0.45);
+    animation: pulse-active 1.2s infinite;
 }
 
 @keyframes pulse {
