@@ -19,11 +19,17 @@
 }
 
 .timezoneSelect {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.3);
   color: #fff;
-  border: 1px solid #444;
-  padding: 2px 5px;
+  border: 1px solid #666;
+  padding: 4px 8px;
   border-radius: 4px;
+  cursor: pointer;
+}
+
+.timezoneSelect option {
+  background: #1a1a1a;
+  color: #fff;
 }
 
 .timezoneLabel {
