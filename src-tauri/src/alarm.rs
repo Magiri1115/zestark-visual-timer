@@ -23,9 +23,9 @@ pub fn play_alarm_inner(
     
 
     let audio_path = if cfg!(debug_assertions) {
-        "assets/alarm.ogg"
+        "assets/alarm.mp3"
     } else {
-        "assets/alarm.ogg"
+        "assets/alarm.mp3"
     };
 
     eprintln!("Attempting to load alarm from: {}", audio_path);
