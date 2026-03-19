@@ -37,10 +37,6 @@ pub async fn start_timer(
     }
 
     let mut remaining_sec = seconds;
-    let sink_mutex = alarm_state.sink.clone();
-    let stream_mutex = alarm_state._stream.clone();
-
-    // spawn前にArcをクローン（'staticになるのでspawn内で使える）
     let alarm_sink = Arc::clone(&alarm_state.sink);
     let alarm_stream = Arc::clone(&alarm_state._stream);
 
@@ -49,18 +45,30 @@ pub async fn start_timer(
         loop {
             tokio::select! {
                 _ = interval.tick() => {
-                    let _ = app_handle.emit("timer_tick", TimerTickPayload { remaining_sec });
                     if remaining_sec == 0 {
+                        // タイマー終了イベントを発火
                         let _ = app_handle.emit("timer_finished", ());
-                        // アラームを鳴らす
-                        let _ = play_alarm_inner(&alarm_sink, &alarm_stream);
-                        // 通知を表示する
-                        show_notification(app_handle.clone(), "Timer Finished".to_string(), "Your timer has finished!".to_string());
+                        
+                        // ✅ 修正: エラーハンドリングを追加してアラーム失敗をログ
+                        if let Err(e) = play_alarm_inner(&alarm_sink, &alarm_stream) {
+                            eprintln!("Failed to play alarm: {}", e);
+                        }
+                        
+                        // 通知を表示
+                        show_notification(
+                            app_handle.clone(),
+                            "タイマー終了".to_string(),
+                            "設定時間が経過しました！".to_string()
+                        );
                         break;
                     }
+                    
+                    // tickイベントを発火
+                    let _ = app_handle.emit("timer_tick", TimerTickPayload { remaining_sec });
                     remaining_sec -= 1;
                 }
                 _ = rx.recv() => {
+                    // タイマー停止
                     break;
                 }
             }

@@ -2,7 +2,6 @@
   display: flex;
   gap: 15px;
   justify-content: center;
-  margin-top: 20px;
 }
 
 .startBtn, .resumeBtn, .pauseBtn, .resetBtn {
@@ -55,11 +54,68 @@
     cursor: pointer;
     position: relative;
     box-shadow: 0 8px 24px rgba(224,112,96,0.45);
-    animation: pulse-active 1.2s infinite;
+    transition: transform 0.3s ease;
+    animation: pulse-heartbeat 3.0s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-heartbeat {
   0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  40% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  60% { transform: scale(1); }
   100% { transform: scale(1); }
+}
+
+.stopAlarmBtn:hover {
+    animation: none;
+    transform: scale(1.08);
+}
+
+.stopAlarmBtn:hover::before {
+    animation: none;
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+}
+
+.stopAlarmBtn::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(224,112,96,0.6);
+  opacity: 0;
+  animation: ripple-heartbeat 3s infinite;
+}
+
+@keyframes ripple-heartbeat {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+  }
+  40% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.8;
+  }
+  50% {
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+  }
+  70% {
+    width: 180px;
+    height: 180px;
+    opacity: 0.2;
+  }
+  100% {
+    width: 240px;
+    height: 240px;
+    opacity: 0;
+  }
 }
