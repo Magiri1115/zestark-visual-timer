@@ -39,8 +39,6 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -64,13 +62,49 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install
 
+        # ビルドとリリース
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: app-v__VERSION__
+<<<<<<< Updated upstream
           releaseName: 'Visual Timer v__VERSION__'
           releaseBody: 'Download and install the appropriate installer for your platform.'
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+=======
+          releaseName: 'App v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+
+      # WindowsだけZIP化
+      - name: Prepare ZIP (Windows only)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          mkdir dist
+
+          REM exeコピー（nsisの場合）
+          copy src-tauri\target\release\bundle\nsis\*.exe dist\ZestarkTimer.exe
+
+          REM msiコピー（ある場合）
+          copy src-tauri\target\release\bundle\msi\*.msi dist\ || echo "no msi"
+
+          REM READMEコピー
+          copy README.txt dist\README.txt
+
+      - name: Create ZIP
+        if: matrix.platform == 'windows-latest'
+        run: powershell Compress-Archive -Path dist\* -DestinationPath zestark-visual-timer.zip
+
+      - name: Upload ZIP to Release
+        if: matrix.platform == 'windows-latest'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: zestark-visual-timer.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+>>>>>>> Stashed changes
