@@ -68,15 +68,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: app-v__VERSION__
-<<<<<<< Updated upstream
           releaseName: 'Visual Timer v__VERSION__'
           releaseBody: 'Download and install the appropriate installer for your platform.'
-          releaseDraft: false
-          prerelease: false
-          args: ${{ matrix.args }}
-=======
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
@@ -107,4 +100,3 @@ jobs:
           files: zestark-visual-timer.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
->>>>>>> Stashed changes
