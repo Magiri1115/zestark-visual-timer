@@ -82,30 +82,39 @@ jobs:
       - name: Prepare ZIP (Windows only)
         if: matrix.platform == 'windows-latest'
         run: |
+          # ZIP用の一時ディレクトリを作成
+          New-Item -ItemType Directory -Force -Path release-zip
 
-          if (Test-Path dist) { Remove-Item -Recurse -Force dist }
-          mkdir dist
-
-          if (Test-Path src-tauri\target\release\bundle\nsis\*.exe) {
-            copy src-tauri\target\release\bundle\nsis\*.exe dist\ZestarkTimer.exe
+          # EXEファイルをコピー
+          $exeFiles = Get-ChildItem -Path "src-tauri\target\release\bundle\nsis\*.exe" -ErrorAction SilentlyContinue
+          if ($exeFiles) {
+            Copy-Item $exeFiles[0].FullName -Destination "release-zip\ZestarkTimer.exe"
           }
 
-          if (Test-Path src-tauri\target\release\bundle\msi\*.msi) {
-            copy src-tauri\target\release\bundle\msi\*.msi dist\
+          # MSIファイルをコピー
+          $msiFiles = Get-ChildItem -Path "src-tauri\target\release\bundle\msi\*.msi" -ErrorAction SilentlyContinue
+          if ($msiFiles) {
+            foreach ($msi in $msiFiles) {
+              Copy-Item $msi.FullName -Destination "release-zip\"
+            }
           }
 
-          if (Test-Path README.txt) {
-            copy README.txt dist\README.txt
+          # README.txtをコピー（存在する場合）
+          if (Test-Path "README.txt") {
+            Copy-Item "README.txt" -Destination "release-zip\README.txt"
           }
 
       - name: Create ZIP
         if: matrix.platform == 'windows-latest'
-        run: powershell Compress-Archive -Path dist\* -DestinationPath zestark-visual-timer.zip
+        run: |
+          Compress-Archive -Path release-zip\* -DestinationPath zestark-visual-timer.zip -Force
 
       - name: Upload ZIP to Release
         if: matrix.platform == 'windows-latest'
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: app-v${{ github.run_number }}
           files: zestark-visual-timer.zip
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
