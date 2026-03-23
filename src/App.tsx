@@ -37,6 +37,7 @@ const App: React.FC = () => {
         <div className={styles.timerWrapper}>
           <Timer 
             status={state.status}
+            mode={state.mode}
             remainingSeconds={state.remainingSeconds}
             totalMinutes={state.totalMinutes}
             dispatch={dispatch}
