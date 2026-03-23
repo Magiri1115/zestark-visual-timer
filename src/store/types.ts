@@ -2,6 +2,7 @@ export type TimerStatus = 'S1' | 'S2' | 'S3' | 'S4'; // S1: Not started, S2: Run
 
 export interface TimerState {
   status: TimerStatus;
+  mode: TimerStatus;
   totalMinutes: number;
   remainingSeconds: number;
   selectedTimezone: string;
@@ -15,4 +16,5 @@ export type TimerAction =
   | { type: 'TICK'; remaining: number }
   | { type: 'FINISHED' }
   | { type: 'SET_TIME'; minutes: number }
-  | { type: 'SET_TIMEZONE'; timezone: string };
+  | { type: 'SET_TIMEZONE'; timezone: string }
+  | { type: 'SWITCH_MODE' };
