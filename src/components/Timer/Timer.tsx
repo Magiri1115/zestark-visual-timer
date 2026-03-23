@@ -7,6 +7,7 @@ import { TimerStatus, TimerAction } from '../../store/types';
 
 interface TimerProps {
   status: TimerStatus;
+  mode: TimerMode;
   remainingSeconds: number;
   totalMinutes: number;
   dispatch: React.Dispatch<TimerAction>;
@@ -17,7 +18,8 @@ interface TimerProps {
 }
 
 const Timer: React.FC<TimerProps> = ({ 
-  status, 
+  status,
+  mode,
   remainingSeconds, 
   totalMinutes, 
   dispatch,
@@ -30,13 +32,16 @@ const Timer: React.FC<TimerProps> = ({
     <div className={`${styles.timerContainer} ${status === 'S1' ? styles.bottom : styles.top}`}>
       <VisualBar 
         remainingSeconds={remainingSeconds} 
-        totalMinutes={totalMinutes} 
+        totalMinutes={totalMinutes}
+        mode={mode}
       />
       <TimeDisplay 
         remainingSeconds={remainingSeconds} 
         status={status} 
         totalMinutes={totalMinutes}
+        mode={mode}
         onTimeChange={(minutes) => dispatch({ type: 'SET_TIME', minutes })}
+        onModeSwitch={() => dispatch({ type: 'SWITCH_MODE' })}
       />
       <Controls 
         status={status}
