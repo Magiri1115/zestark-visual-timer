@@ -15,7 +15,12 @@
   transition: background-color 0.3s ease;
 }
 
-.active {
+.focus {
   background-color: var(--segment-active);
   box-shadow: 0 0 5px var(--segment-active);
+}
+
+.break {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 5px var(--primary-color);
 }
