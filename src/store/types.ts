@@ -1,8 +1,9 @@
 export type TimerStatus = 'S1' | 'S2' | 'S3' | 'S4'; // S1: Not started, S2: Running, S3: Paused, S4: Alarm
+export type TimerMode = 'focus' | 'break';
 
 export interface TimerState {
   status: TimerStatus;
-  mode: TimerStatus;
+  mode: TimerMode;
   totalMinutes: number;
   remainingSeconds: number;
   selectedTimezone: string;

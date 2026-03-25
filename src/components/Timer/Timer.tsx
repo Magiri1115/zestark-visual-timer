@@ -3,7 +3,7 @@ import styles from './Timer.module.css';
 import VisualBar from '../VisualBar';
 import TimeDisplay from '../TimeDisplay';
 import Controls from '../Controls';
-import { TimerStatus, TimerAction } from '../../store/types';
+import { TimerStatus, TimerAction, TimerMode } from '../../store/types';
 
 interface TimerProps {
   status: TimerStatus;
