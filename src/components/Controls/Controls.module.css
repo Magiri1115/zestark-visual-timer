@@ -1,0 +1,121 @@
+.controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.startBtn, .resumeBtn, .pauseBtn, .resetBtn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.startBtn, .resumeBtn {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.pauseBtn {
+  background-color: var(--secondary-color);
+  color: #fff;
+}
+
+.resetBtn {
+  background-color: #555;
+  color: #fff;
+}
+
+.startBtn:hover, .resumeBtn:hover, .pauseBtn:hover, .resetBtn:hover {
+  filter: brightness(1.2);
+}
+
+.alarmContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.stopAlarmBtn {
+    width: 120px;
+    height: 120px;
+    flex: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(224,112,96,0.45);
+    transition: transform 0.3s ease;
+    animation: pulse-heartbeat 3.0s infinite;
+}
+
+@keyframes pulse-heartbeat {
+  0% { transform: scale(1); }
+  40% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  60% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+.stopAlarmBtn:hover {
+    animation: none;
+    transform: scale(1.08);
+}
+
+.stopAlarmBtn:hover::before {
+    animation: none;
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+}
+
+.stopAlarmBtn::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(224,112,96,0.6);
+  opacity: 0;
+  animation: ripple-heartbeat 3s infinite;
+}
+
+@keyframes ripple-heartbeat {
+  0% {
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+  }
+  40% {
+    width: 10px;
+    height: 10px;
+    opacity: 0.8;
+  }
+  50% {
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+  }
+  70% {
+    width: 180px;
+    height: 180px;
+    opacity: 0.2;
+  }
+  100% {
+    width: 240px;
+    height: 240px;
+    opacity: 0;
+  }
+}

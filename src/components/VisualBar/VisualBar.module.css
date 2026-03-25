@@ -1,0 +1,26 @@
+.barContainer {
+  display: flex;
+  gap: 2px;
+  width: 280px;
+  height: 24px;
+  background-color: #333;
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.segment {
+  flex: 1;
+  background-color: #444;
+  border-radius: 1px;
+  transition: background-color 0.3s ease;
+}
+
+.focus {
+  background-color: var(--segment-active);
+  box-shadow: 0 0 5px var(--segment-active);
+}
+
+.break {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 5px var(--primary-color);
+}

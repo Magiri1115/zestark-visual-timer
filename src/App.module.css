@@ -1,0 +1,92 @@
+.appContainer {
+  width: 320px;
+  height: 360px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-color);
+  user-select: none;
+  overflow: hidden;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.clockWrapper, .timerWrapper {
+  width: 100%;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+}
+
+/* S1: Clock top, Timer bottom */
+.s1 .clockWrapper {
+  top: 20px;
+  opacity: 1;
+}
+
+.s1 .timerWrapper {
+  top: 108px;
+}
+
+/* S2, S3, S4: Timer center, Clock bottom */
+/* Animations based on requirement: 
+   "時計エリア: 画面上部へスクロールアウトした後、反対側（画面下部）からスライドイン"
+   "タイマーエリア: 目的の配置場所へ自動的にスクロール"
+*/
+
+.s2 .clockWrapper {
+  top: 280px;
+  animation: clockShift 0.6s forwards;
+}
+
+.s2 .timerWrapper {
+  top: 40px; /* Center-ish */
+}
+
+@keyframes clockShift {
+  0% {
+    top: 20px;
+    opacity: 1;
+  }
+  45% {
+    top: -100px;
+    opacity: 0;
+  }
+  55% {
+    top: 400px;
+    opacity: 0;
+  }
+  100% {
+    top: 280px;
+    opacity: 1;
+  }
+}
+
+/* S1 <-> S2 への遷移時のアニメーション */
+.s1 .clockWrapper {
+  animation: clockShiftReverse 0.6s forwards;
+}
+
+@keyframes clockShiftReverse {
+  0% {
+    top: 280px;
+    opacity: 1;
+  }
+  45% {
+    top: 400px;
+    opacity: 0;
+  }
+  55% {
+    top: -100px;
+    opacity: 0;
+  }
+  100% {
+    top: 20px;
+    opacity: 1;
+  }
+}

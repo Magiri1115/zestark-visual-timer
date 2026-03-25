@@ -1,0 +1,20 @@
+{
+  "name": "Zestark Visual Timer Env",
+  "image": "mcr.microsoft.com/devcontainers/rust:1",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "postCreateCommand": "pnpm install && sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libasound2-dev libsoup-3.0-dev libjavascriptcoregtk-4.1-dev pkg-config build-essential libssl-dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "serayuzgur.2103",
+        "tauri-apps.tauri-vscode"
+      ]
+    }
+  }
+}

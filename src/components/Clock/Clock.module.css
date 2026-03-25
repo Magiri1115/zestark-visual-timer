@@ -1,0 +1,37 @@
+.clockContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.time {
+  font-size: 2.5rem;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 5px;
+}
+
+.timezoneInfo {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.timezoneSelect {
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: 1px solid #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.timezoneSelect option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.timezoneLabel {
+  font-style: italic;
+}
