@@ -2,8 +2,16 @@ export type TimerStatus = 'S1' | 'S2' | 'S3' | 'S4'; // S1: Not started, S2: Run
 export type TimerMode = 'focus' | 'break';
 
 export interface TimerState {
+  /*
+  * phase: TimerMode;           // 現在実行中のフェーズ（S2/S3/S4で参照）
+  * focusMinutes: number;       // 集中タイマー設定値
+  * breakMinutes: number;       // 休憩タイマー設定値
+  * totalMinutes: number;       // focusMinutes + breakMinutes（バー計算用）
+  */
   status: TimerStatus;
-  mode: TimerMode;
+  phase: TimerMode;
+  focusMinutes: number;
+  breakMinutes: number;
   totalMinutes: number;
   remainingSeconds: number;
   selectedTimezone: string;
@@ -16,6 +24,6 @@ export type TimerAction =
   | { type: 'RESET' }
   | { type: 'TICK'; remaining: number }
   | { type: 'FINISHED' }
-  | { type: 'SET_TIME'; minutes: number }
-  | { type: 'SET_TIMEZONE'; timezone: string }
-  | { type: 'SWITCH_MODE' };
+  | { type: 'SET_FOCUS_TIME'; minutes: number }
+  | { type: 'SET_BREAK_TIME'; minutes: number }
+  | { type: 'SET_TIMEZONE'; timezone: string };

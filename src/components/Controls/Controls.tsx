@@ -20,6 +20,9 @@ const Controls: React.FC<ControlsProps> = ({ status, onStart, onPause, onReset, 
     );
   }
 
+  // S2（実行中）はリセット不可、S1/S3は可
+  const resetDisabled = status === 'S2';
+
   return (
     <div className={styles.controls}>
       {status === 'S1' && (
@@ -31,7 +34,13 @@ const Controls: React.FC<ControlsProps> = ({ status, onStart, onPause, onReset, 
       {status === 'S3' && (
         <button className={styles.resumeBtn} onClick={onStart}>再開</button>
       )}
-      <button className={styles.resetBtn} onClick={onReset}>リセット</button>
+      <button
+        className={`${styles.resetBtn} ${resetDisabled ? styles.resetDisabled : ''}`}
+        onClick={onReset}
+        disabled={resetDisabled}
+      >
+        リセット
+      </button>
     </div>
   );
 };

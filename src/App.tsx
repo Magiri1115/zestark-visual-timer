@@ -28,18 +28,19 @@ const App: React.FC = () => {
     <div className={styles.appContainer}>
       <div className={`${styles.content} ${state.status === 'S1' ? styles.s1 : styles.s2}`}>
         <div className={styles.clockWrapper}>
-          <Clock 
-            status={state.status} 
-            timezone={state.selectedTimezone} 
+          <Clock
+            status={state.status}
+            timezone={state.selectedTimezone}
             onTimezoneChange={(tz) => dispatch({ type: 'SET_TIMEZONE', timezone: tz })}
           />
         </div>
         <div className={styles.timerWrapper}>
-          <Timer 
+          <Timer
             status={state.status}
-            mode={state.mode}
+            phase={state.phase}
             remainingSeconds={state.remainingSeconds}
-            totalMinutes={state.totalMinutes}
+            focusMinutes={state.focusMinutes}
+            breakMinutes={state.breakMinutes}
             dispatch={dispatch}
             onStart={() => startTimer(state.remainingSeconds)}
             onPause={stopTimer}
