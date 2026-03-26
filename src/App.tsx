@@ -1,9 +1,10 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import './styles/global.css';
 import './styles/reset.css';
 import styles from './App.module.css';
 import Clock from './components/Clock';
 import Timer from './components/Timer';
+import Settings from './components/Settings';
 import { timerReducer, initialState } from './store/timerReducer';
 import { useTimer } from './hooks/useTimer';
 import { useAlarm } from './hooks/useAlarm';
@@ -12,6 +13,7 @@ const App: React.FC = () => {
   const [state, dispatch] = useReducer(timerReducer, initialState);
   const { startTimer, stopTimer, resetTimer } = useTimer(dispatch);
   const { playAlarm, stopAlarm } = useAlarm();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (state.status === 'S4') {
@@ -32,6 +34,7 @@ const App: React.FC = () => {
             status={state.status}
             timezone={state.selectedTimezone}
             onTimezoneChange={(tz) => dispatch({ type: 'SET_TIMEZONE', timezone: tz })}
+            onSettingsOpen={() => setSettingsOpen(true)}
           />
         </div>
         <div className={styles.timerWrapper}>
@@ -40,7 +43,9 @@ const App: React.FC = () => {
             phase={state.phase}
             remainingSeconds={state.remainingSeconds}
             focusMinutes={state.focusMinutes}
-            breakMinutes={state.breakMinutes}
+            breakSeconds={state.breakSeconds}
+            breakIncludeZero={state.settings.breakIncludeZero}
+            breakIncludeMax={state.settings.breakIncludeMax}
             dispatch={dispatch}
             onStart={() => startTimer(state.remainingSeconds)}
             onPause={stopTimer}
@@ -49,6 +54,14 @@ const App: React.FC = () => {
           />
         </div>
       </div>
+
+      {settingsOpen && (
+        <Settings
+          settings={state.settings}
+          onUpdate={(s) => dispatch({ type: 'UPDATE_SETTINGS', settings: s })}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
     </div>
   );
 };

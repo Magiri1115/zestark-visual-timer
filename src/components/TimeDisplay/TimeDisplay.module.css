@@ -6,6 +6,7 @@
   margin: 10px 0;
 }
 
+/* ── S1: 横並びブロック ── */
 .modeRow {
   display: flex;
   flex-direction: row;
@@ -41,6 +42,7 @@
 .focusLabel { color: #2ecc71; }
 .breakLabel { color: #3498db; }
 
+.focusDot { background: #2ecc71; }
 .breakDot { background: #3498db; }
 
 .spinnerRow {
@@ -63,21 +65,26 @@
   color: #fff;
   transition: filter 0.15s;
 }
-.spinBtn:hover { filter: brightness(1.25); }
+.spinBtn:hover:not(:disabled) { filter: brightness(1.25); }
+.spinBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
 
 .spinMinus  { background: #e74c3c; }
 .focusPlus  { background: #2ecc71; }
 .breakPlus  { background: #3498db; }
 
 .spinVal {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #ffffff;
-  min-width: 34px;
+  min-width: 38px;
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
 
+/* ── S2/S3/S4: 実行中表示 ── */
 .display {
   display: flex;
   flex-direction: column;
