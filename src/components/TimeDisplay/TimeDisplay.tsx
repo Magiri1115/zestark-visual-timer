@@ -32,7 +32,6 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
           <div className={`${styles.modeBlock} ${styles.focusBlock}`}>
             <span className={`${styles.modeLabel} ${styles.focusLabel}`}>
-              <span className={`${styles.modeDot} ${styles.focusDot}`} />
               集中
             </span>
             <div className={styles.spinnerRow}>
@@ -50,7 +49,6 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
           <div className={`${styles.modeBlock} ${styles.breakBlock}`}>
             <span className={`${styles.modeLabel} ${styles.breakLabel}`}>
-              <span className={`${styles.modeDot} ${styles.breakDot}`} />
               休憩
             </span>
             <div className={styles.spinnerRow}>

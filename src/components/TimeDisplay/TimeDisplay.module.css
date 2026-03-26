@@ -41,13 +41,6 @@
 .focusLabel { color: #2ecc71; }
 .breakLabel { color: #3498db; }
 
-.modeDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.focusDot { background: #2ecc71; }
 .breakDot { background: #3498db; }
 
 .spinnerRow {
