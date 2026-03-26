@@ -1,6 +1,6 @@
 {
   "productName": "Visual Timer",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "identifier": "com.zestark.visual-timer",
   "build": {
     "beforeDevCommand": "pnpm dev",
