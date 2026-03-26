@@ -5,10 +5,11 @@ export interface SegmentInfo {
 
 export const calcSegments = (
   remainingSec: number,
-  totalMinutes: number,
-  mode: 'focus' | 'break'
+  focusMinutes: number,
+  breakMinutes: number,
 ): SegmentInfo => {
-  if (totalMinutes === 0) return { activeSegments: 30, focusSegments: 0 };
+  const totalMinutes = focusMinutes + breakMinutes;
+  if (totalMinutes === 0) return { activeSegments: 0, focusSegments: 0 };
 
   const totalSec = totalMinutes * 60;
   const elapsedSec = totalSec - remainingSec;
@@ -16,7 +17,7 @@ export const calcSegments = (
 
   const activeSegments = Math.min(Math.max(Math.floor(elapsedSec / segmentDuration), 0), 30);
 
-  const focusSegments = mode === 'focus' ? activeSegments : 25;
+  const focusSegments = Math.floor((focusMinutes / totalMinutes) * 30);
 
   return { activeSegments, focusSegments };
 };

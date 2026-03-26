@@ -6,49 +6,68 @@ import { TimerMode } from '../../store/types';
 interface TimeDisplayProps {
   remainingSeconds: number;
   status: 'S1' | 'S2' | 'S3' | 'S4';
-  totalMinutes: number;
-  mode: TimerMode;
-  onTimeChange: (minutes: number) => void;
-  onModeSwitch: () => void;
+  focusMinutes: number;
+  breakMinutes: number;
+  phase: TimerMode;
+  onFocusTimeChange: (minutes: number) => void;
+  onBreakTimeChange: (minutes: number) => void;
 }
 
 const TimeDisplay: React.FC<TimeDisplayProps> = ({
   remainingSeconds,
   status,
-  totalMinutes,
-  mode,
-  onTimeChange,
-  onModeSwitch
+  focusMinutes,
+  breakMinutes,
+  phase,
+  onFocusTimeChange,
+  onBreakTimeChange,
 }) => {
   const timeStr = formatTime(remainingSeconds);
-  const modeLabel = mode === 'focus' ? '集中' : '休憩';
-
-  const increment = () => {
-    if (totalMinutes < 60) onTimeChange(totalMinutes + 1);
-  };
-
-  const decrement = () => {
-    if (totalMinutes > 1) onTimeChange(totalMinutes - 1);
-  };
+  const phaseLabel = phase === 'focus' ? '集中' : '休憩';
 
   return (
     <div className={styles.container}>
       {status === 'S1' ? (
-        <>
-          <div className={styles.modeSwitch}>
-            <button className={styles.modeSwitchBtn} onClick={onModeSwitch}>
-              {modeLabel}モード
-            </button>
+        <div className={styles.modeRow}>
+
+          <div className={`${styles.modeBlock} ${styles.focusBlock}`}>
+            <span className={`${styles.modeLabel} ${styles.focusLabel}`}>
+              集中
+            </span>
+            <div className={styles.spinnerRow}>
+              <button
+                className={`${styles.spinBtn} ${styles.spinMinus}`}
+                onClick={() => onFocusTimeChange(focusMinutes - 1)}
+              >－</button>
+              <span className={styles.spinVal}>{focusMinutes}分</span>
+              <button
+                className={`${styles.spinBtn} ${styles.focusPlus}`}
+                onClick={() => onFocusTimeChange(focusMinutes + 1)}
+              >＋</button>
+            </div>
           </div>
-          <div className={styles.config}>
-            <button className={styles.btnMinus} onClick={decrement}>－</button>
-            <span className={styles.timeValue} data-testid="timer-value">{totalMinutes}分00秒</span>
-            <button className={styles.btnPlus} onClick={increment}>＋</button>
+
+          <div className={`${styles.modeBlock} ${styles.breakBlock}`}>
+            <span className={`${styles.modeLabel} ${styles.breakLabel}`}>
+              休憩
+            </span>
+            <div className={styles.spinnerRow}>
+              <button
+                className={`${styles.spinBtn} ${styles.spinMinus}`}
+                onClick={() => onBreakTimeChange(breakMinutes - 1)}
+              >－</button>
+              <span className={styles.spinVal}>{breakMinutes}分</span>
+              <button
+                className={`${styles.spinBtn} ${styles.breakPlus}`}
+                onClick={() => onBreakTimeChange(breakMinutes + 1)}
+              >＋</button>
+            </div>
           </div>
-        </>
+
+        </div>
       ) : (
         <div className={styles.display}>
-          <div className={styles.modeLabel}>{modeLabel}</div>
+          <div className={styles.phaseLabel}>{phaseLabel}</div>
           <span className={styles.timeText} data-testid="timer-value">{timeStr}</span>
         </div>
       )}

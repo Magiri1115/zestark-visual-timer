@@ -7,9 +7,10 @@ import { TimerStatus, TimerAction, TimerMode } from '../../store/types';
 
 interface TimerProps {
   status: TimerStatus;
-  mode: TimerMode;
+  phase: TimerMode;
   remainingSeconds: number;
-  totalMinutes: number;
+  focusMinutes: number;
+  breakMinutes: number;
   dispatch: React.Dispatch<TimerAction>;
   onStart: () => void;
   onPause: () => void;
@@ -17,33 +18,35 @@ interface TimerProps {
   onStopAlarm: () => void;
 }
 
-const Timer: React.FC<TimerProps> = ({ 
+const Timer: React.FC<TimerProps> = ({
   status,
-  mode,
-  remainingSeconds, 
-  totalMinutes, 
+  phase,
+  remainingSeconds,
+  focusMinutes,
+  breakMinutes,
   dispatch,
   onStart,
   onPause,
   onReset,
-  onStopAlarm
+  onStopAlarm,
 }) => {
   return (
     <div className={`${styles.timerContainer} ${status === 'S1' ? styles.bottom : styles.top}`}>
-      <VisualBar 
-        remainingSeconds={remainingSeconds} 
-        totalMinutes={totalMinutes}
-        mode={mode}
+      <VisualBar
+        remainingSeconds={remainingSeconds}
+        focusMinutes={focusMinutes}
+        breakMinutes={breakMinutes}
       />
-      <TimeDisplay 
-        remainingSeconds={remainingSeconds} 
-        status={status} 
-        totalMinutes={totalMinutes}
-        mode={mode}
-        onTimeChange={(minutes) => dispatch({ type: 'SET_TIME', minutes })}
-        onModeSwitch={() => dispatch({ type: 'SWITCH_MODE' })}
+      <TimeDisplay
+        remainingSeconds={remainingSeconds}
+        status={status}
+        focusMinutes={focusMinutes}
+        breakMinutes={breakMinutes}
+        phase={phase}
+        onFocusTimeChange={(minutes) => dispatch({ type: 'SET_FOCUS_TIME', minutes })}
+        onBreakTimeChange={(minutes) => dispatch({ type: 'SET_BREAK_TIME', minutes })}
       />
-      <Controls 
+      <Controls
         status={status}
         onStart={onStart}
         onPause={onPause}

@@ -27,8 +27,18 @@
   color: #fff;
 }
 
-.startBtn:hover, .resumeBtn:hover, .pauseBtn:hover, .resetBtn:hover {
+.startBtn:hover, .resumeBtn:hover, .pauseBtn:hover {
   filter: brightness(1.2);
+}
+
+.resetBtn:not(:disabled):hover {
+  filter: brightness(1.2);
+}
+
+.resetDisabled {
+  background-color: #3a3a3a;
+  color: #666;
+  cursor: not-allowed;
 }
 
 .alarmContainer {
@@ -39,43 +49,36 @@
 }
 
 .stopAlarmBtn {
-    width: 120px;
-    height: 120px;
-    flex: none;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 800;
-    background-color: var(--secondary-color);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 8px 24px rgba(224,112,96,0.45);
-    transition: transform 0.3s ease;
-    animation: pulse-heartbeat 3.0s infinite;
+  width: 120px;
+  height: 120px;
+  flex: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  background-color: var(--secondary-color);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(224,112,96,0.45);
+  transition: transform 0.3s ease;
+  animation: pulse-heartbeat 3.0s infinite;
 }
 
 @keyframes pulse-heartbeat {
-  0% { transform: scale(1); }
-  40% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  60% { transform: scale(1); }
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  60%  { transform: scale(1); }
   100% { transform: scale(1); }
 }
 
 .stopAlarmBtn:hover {
-    animation: none;
-    transform: scale(1.08);
-}
-
-.stopAlarmBtn:hover::before {
-    animation: none;
-    width: 80px;
-    height: 80px;
-    opacity: 0.5;
+  animation: none;
+  transform: scale(1.08);
 }
 
 .stopAlarmBtn::before {
@@ -92,30 +95,17 @@
   animation: ripple-heartbeat 3s infinite;
 }
 
+.stopAlarmBtn:hover::before {
+  animation: none;
+  width: 80px;
+  height: 80px;
+  opacity: 0.5;
+}
+
 @keyframes ripple-heartbeat {
-  0% {
-    width: 10px;
-    height: 10px;
-    opacity: 0;
-  }
-  40% {
-    width: 10px;
-    height: 10px;
-    opacity: 0.8;
-  }
-  50% {
-    width: 80px;
-    height: 80px;
-    opacity: 0.5;
-  }
-  70% {
-    width: 180px;
-    height: 180px;
-    opacity: 0.2;
-  }
-  100% {
-    width: 240px;
-    height: 240px;
-    opacity: 0;
-  }
+  0%   { width: 10px;  height: 10px;  opacity: 0; }
+  40%  { width: 10px;  height: 10px;  opacity: 0.8; }
+  50%  { width: 80px;  height: 80px;  opacity: 0.5; }
+  70%  { width: 180px; height: 180px; opacity: 0.2; }
+  100% { width: 240px; height: 240px; opacity: 0; }
 }
