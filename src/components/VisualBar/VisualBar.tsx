@@ -5,11 +5,11 @@ import { calcSegments } from '../../lib/calcSegments';
 interface VisualBarProps {
   remainingSeconds: number;
   focusMinutes: number;
-  breakMinutes: number;
+  breakSeconds: number;
 }
 
-const VisualBar: React.FC<VisualBarProps> = ({ remainingSeconds, focusMinutes, breakMinutes }) => {
-  const { activeSegments, focusSegments } = calcSegments(remainingSeconds, focusMinutes, breakMinutes);
+const VisualBar: React.FC<VisualBarProps> = ({ remainingSeconds, focusMinutes, breakSeconds }) => {
+  const { activeSegments, focusSegments } = calcSegments(remainingSeconds, focusMinutes, breakSeconds);
 
   return (
     <div className={styles.barContainer}>

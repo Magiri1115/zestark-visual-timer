@@ -10,7 +10,9 @@ interface TimerProps {
   phase: TimerMode;
   remainingSeconds: number;
   focusMinutes: number;
-  breakMinutes: number;
+  breakSeconds: number;
+  breakIncludeZero: boolean;
+  breakIncludeMax: boolean;
   dispatch: React.Dispatch<TimerAction>;
   onStart: () => void;
   onPause: () => void;
@@ -23,7 +25,9 @@ const Timer: React.FC<TimerProps> = ({
   phase,
   remainingSeconds,
   focusMinutes,
-  breakMinutes,
+  breakSeconds,
+  breakIncludeZero,
+  breakIncludeMax,
   dispatch,
   onStart,
   onPause,
@@ -35,16 +39,18 @@ const Timer: React.FC<TimerProps> = ({
       <VisualBar
         remainingSeconds={remainingSeconds}
         focusMinutes={focusMinutes}
-        breakMinutes={breakMinutes}
+        breakSeconds={breakSeconds}
       />
       <TimeDisplay
         remainingSeconds={remainingSeconds}
         status={status}
         focusMinutes={focusMinutes}
-        breakMinutes={breakMinutes}
+        breakSeconds={breakSeconds}
         phase={phase}
-        onFocusTimeChange={(minutes) => dispatch({ type: 'SET_FOCUS_TIME', minutes })}
-        onBreakTimeChange={(minutes) => dispatch({ type: 'SET_BREAK_TIME', minutes })}
+        breakIncludeZero={breakIncludeZero}
+        breakIncludeMax={breakIncludeMax}
+        onFocusTimeChange={(minutes) => dispatch({ type: 'SET_FOCUS_MINUTES', minutes })}
+        onBreakTimeChange={(seconds) => dispatch({ type: 'SET_BREAK_SECONDS', seconds })}
       />
       <Controls
         status={status}

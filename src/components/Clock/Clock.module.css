@@ -18,6 +18,12 @@
   color: #aaa;
 }
 
+.tzRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .timezoneSelect {
   background: rgba(0, 0, 0, 0.3);
   color: #fff;
@@ -25,12 +31,27 @@
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
 }
 
 .timezoneSelect option {
   background: #1a1a1a;
   color: #fff;
 }
+
+.settingsBtn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+  line-height: 1;
+}
+.settingsBtn:hover { color: #ccc; }
 
 .timezoneLabel {
   font-style: italic;
