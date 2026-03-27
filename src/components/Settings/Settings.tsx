@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './Settings.module.css';
-import { Settings as SettingsType } from '../store/types';
-import { formatBreakLabel, getBreakSteps, stepBreak } from '../lib/breakSteps';
+import { Settings as SettingsType } from '../../store/types';
+import { formatBreakLabel, getBreakSteps, stepBreak } from '../../lib/breakSteps';
 
 interface SettingsProps {
   settings: SettingsType;

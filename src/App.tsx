@@ -4,7 +4,7 @@ import './styles/reset.css';
 import styles from './App.module.css';
 import Clock from './components/Clock';
 import Timer from './components/Timer';
-import Settings from './components/Settings';
+import Settings from './components/Settings/Settings';
 import { timerReducer, initialState } from './store/timerReducer';
 import { useTimer } from './hooks/useTimer';
 import { useAlarm } from './hooks/useAlarm';
